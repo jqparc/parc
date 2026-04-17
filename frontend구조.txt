@@ -1,0 +1,6 @@
+frontend/               # 순수 HTML, CSS, JS만 위치
+    ├── index.html 
+    ├── styles/      
+    ├── templates/
+    └── scripts/     
+        └── api.js

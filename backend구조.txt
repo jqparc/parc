@@ -1,0 +1,26 @@
+fastapi_project/
+│
+├── main.py              # FastAPI 애플리케이션의 진입점 (앱 실행 및 라우터 등록)
+├── core/                # 핵심 설정
+│   ├── config.py        # 환경 변수 (DB 주소, API 키 등)
+│   └── security.py      # 인증 및 보안 관련 로직
+│
+├── api/                 # API 라우터 (엔드포인트)
+│   ├── endpoints/
+│   │   ├── users.py     # /api/users 관련 라우터
+│   │   └── items.py     # /api/items 관련 라우터
+│   └── api_router.py    # 모든 엔드포인트를 하나로 묶는 파일
+│
+├── models/              # 데이터베이스 모델 (SQLAlchemy 등)
+│   └── user.py
+│
+├── schemas/             # Pydantic 모델 (데이터 유효성 검사 및 API 응답 형식 정의)
+│   └── user.py
+│
+├── services/            # 비즈니스 로직 (API 라우터는 얇게 유지하고, 실제 처리는 여기서 담당)
+│   └── user_service.py
+│
+├── db/                  # 데이터베이스 연결 및 세션 관리
+│   └── session.py
+│
+└── requirements.txt     # 필요한 파이썬 패키지 목록
