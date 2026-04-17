@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from routers.api import master_router
+from routers import index # 마스터 라우터 하나만 임포트
 from db.database import engine
 from models import user_model
 
@@ -23,4 +23,4 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory="../frontend"), name="static")
 
 # 3. 각 부서(라우터)들 등록하기 ⭐
-app.include_router(master_router)
+app.include_router(index.router)

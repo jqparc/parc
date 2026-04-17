@@ -10,15 +10,32 @@
 <body>
     <header>
         <div>
-            <h1>Parc</h1>
+            <a href="/" class="logo-link">
+                <div class="logo">
+                    <!-- <img src="{{ url_for('static', path='img/logo.png') }}" alt="logo"> -->
+                </div>
+                <div class="company-name">
+                    <h1>Parc</h1>
+                </div>
+            </a>
         </div>
-        <nav class="auth-menu">
-            <a href="#" class="login-btn">로그인</a>
+        <nav class="auth-menu" id="header-auth-nav">
+            <a href="/login" class="login-btn">로그인</a>
             <a href="/signup" class="signup-btn">회원가입</a>
         </nav>
     </header>
     <nav>
-        <h1>네비게이션</h1>
+        <nav class="nav-index">      
+            <a href="#" class="top-button {% if active_top == 'ecnm' %}active{% endif %}">경제</a>
+            <a href="#" class="top-button {% if active_top == 'asst' %}active{% endif %}">자산</a>
+            <a href="#" class="top-button {% if active_top == 'dev' %}active{% endif %}">개발</a>
+        </nav>
+        <nav class="nav-dtl">      
+            {% for tab in nav_dtl_tabs %}
+                <a href="{{ tab.url }}" 
+                    class="top-button {% if tab.id == active_dtl %}active{% endif %}">{{ tab.name }}</a>
+            {% endfor %}
+        </nav>    
     </nav>
 
     <div class="main-container">

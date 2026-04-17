@@ -8,3 +8,32 @@ header {
     /* border-bottom: 1px solid #eaeaea; 헤더 아래에 옅은 회색 선 추가 */
     /* margin-bottom: 30px; 헤더와 본문 사이의 간격 */
 }
+
+/* 기본 스타일 (PC용) */
+.container {
+    width: 800px; /* PC에서는 고정 너비 */
+    margin: 0 auto;
+}
+
+/* 📱 핸드폰/태블릿용 스타일 (화면 너비가 768px보다 작을 때) */
+@media (max-width: 768px) {
+    .container {
+        width: 100%; /* 핸드폰에서는 화면의 95%만 차지하도록 유연하게 변경 */
+        /* padding: 10px; */
+    }
+
+    .navbar {
+        flex-direction: column; /* 메뉴바 요소를 가로가 아닌 세로로 쌓기 */
+        padding: 1rem;
+    }
+
+    .nav-tabs {
+        margin-top: 15px;
+        width: 100%;
+        justify-content: space-around; /* 탭 메뉴를 가득 채우기 */
+    }
+
+    .nav-item {
+        margin: 0; /* 탭 간격 좁히기 */
+    }
+}

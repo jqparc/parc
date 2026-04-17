@@ -1,7 +1,16 @@
-# 파이썬 가상환경 제외
-backend/venv/
-venv/
-
-# 파이썬 임시 파일 제외
+# Python 관련 쓰레기 파일들
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+
+# 데이터베이스 (개인 데이터가 들어있으므로 올리지 않음)
+*.db
+*.sqlite3
+
+# 가상환경
+venv/
+.venv/
+
+# 기타 설정 파일
+.vscode/
+.idea/
