@@ -1,0 +1,10 @@
+header {
+    display: flex; /* 상자 안의 요소들을 가로로 배치합니다 */
+    justify-content: space-between; /* 핵심! 빈 공간을 가운데에 두고 양끝으로 쫙 밀어냅니다 */
+    align-items: center; /* 세로 기준으로 가운데 정렬합니다 */
+    
+    background-color: rgb(181, 69, 69);
+     /* padding: 15px 30px;  */
+    /* border-bottom: 1px solid #eaeaea; 헤더 아래에 옅은 회색 선 추가 */
+    /* margin-bottom: 30px; 헤더와 본문 사이의 간격 */
+}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parc World</title>
+    
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+    <header>
+        <div>
+            <h1>Parc</h1>
+        </div>
+        <nav class="auth-menu">
+            <a href="#" class="login-btn">로그인</a>
+            <a href="/signup" class="signup-btn">회원가입</a>
+        </nav>
+    </header>
+    <nav>
+        <h1>네비게이션</h1>
+    </nav>
+
+    <div class="main-container">
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Parc co.</p>
+    </footer>
+</body>
+</html>
