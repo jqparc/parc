@@ -9,8 +9,8 @@ templates = Jinja2Templates(directory="../frontend")
 # 회원가입 화면 (signup.html)
 @router.get("/signup")
 async def read_signup(request: Request):
-    return templates.TemplateResponse("pages/auth/signup.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="pages/auth/signup.html")
 
 @router.get("/login")
 async def read_signup(request: Request):
-    return templates.TemplateResponse("pages/auth/login.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="pages/auth/login.html")
