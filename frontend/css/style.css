@@ -1,39 +1,87 @@
+body {
+    min-height: 100vh;
+    background-color: rgb(99, 85, 255);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
 header {
-    display: flex; /* 상자 안의 요소들을 가로로 배치합니다 */
-    justify-content: space-between; /* 핵심! 빈 공간을 가운데에 두고 양끝으로 쫙 밀어냅니다 */
+    display: flex; 
+    justify-content: space-between; 
     align-items: center; /* 세로 기준으로 가운데 정렬합니다 */
     
-    background-color: rgb(181, 69, 69);
-     /* padding: 15px 30px;  */
-    /* border-bottom: 1px solid #eaeaea; 헤더 아래에 옅은 회색 선 추가 */
-    /* margin-bottom: 30px; 헤더와 본문 사이의 간격 */
+    background-color: rgb(255, 101, 101);
+
+}
+.nav-menu {
+    background-color: rgb(114, 151, 40);
+}
+.nav-tab {
+    background-color: rgb(204, 255, 103);
 }
 
-/* 기본 스타일 (PC용) */
-.container {
-    width: 800px; /* PC에서는 고정 너비 */
+main {
+    background-color: rgb(141, 141, 141);
+    padding: 7px 2%;
+    flex: 1;
+
+    height: auto;
+}
+
+.main-container{
+    background-color: rgb(252, 252, 252);
+
+    max-width: 1500px;
+    width:100%;
     margin: 0 auto;
+
+    height: auto;
 }
 
-/* 📱 핸드폰/태블릿용 스타일 (화면 너비가 768px보다 작을 때) */
-@media (max-width: 768px) {
-    .container {
-        width: 100%; /* 핸드폰에서는 화면의 95%만 차지하도록 유연하게 변경 */
-        /* padding: 10px; */
-    }
+.card-grid {
+    display: grid;
+    /* 👇 화면 너비에 맞춰서 최소 250px짜리 카드를 구겨 넣고, 남는 공간은 공평하게 나눠 가지라는 뜻! */
+    grid-template-columns: 1fr;
+    gap: 5px;
+    padding: 1%;
+}
 
-    .navbar {
-        flex-direction: column; /* 메뉴바 요소를 가로가 아닌 세로로 쌓기 */
-        padding: 1rem;
-    }
+.card {
+    background-color: #929292;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px; /* 모서리 둥글게 */
+    overflow: hidden;    /* 이미지가 둥근 모서리를 삐져나가지 않게 막음 */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* 은은한 그림자 */
+    display: flex;
+    flex-direction: column; /* 내용을 위에서 아래로 세로 정렬 */
+    
+    min-height: 300px;
+    height: auto;
+}
 
-    .nav-tabs {
-        margin-top: 15px;
-        width: 100%;
-        justify-content: space-around; /* 탭 메뉴를 가득 채우기 */
-    }
+.split-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+}
 
-    .nav-item {
-        margin: 0; /* 탭 간격 좁히기 */
+.split-right {
+    text-align: right; 
+}
+
+footer {
+    background-color: rgb(220, 255, 150);
+}
+
+
+p, h2 {
+    margin: 0px;
+}
+
+/* 2. 화면이 넓어졌을 때 (PC/태블릿: 650px 이상부터 2열로 변경) */
+@media (min-width: 650px) {
+    .card-grid {
+        /* 무조건 2개의 열만 생성합니다. 
+           1500px이 되어도 3개로 늘어나지 않고 2개를 유지합니다. */
+        grid-template-columns: repeat(2, 1fr); 
     }
 }

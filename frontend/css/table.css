@@ -1,0 +1,25 @@
+.table-container {
+    width: 100%;
+    background-color: #e5e8ff;
+    border-radius: 8px;
+}
+
+.common-table{
+    background-color: #8287b4;
+    width: 95%;
+    margin: 10px auto;
+}
+
+.infos-table{
+    background-color: #a5aeff;
+    width: 95%;
+    margin: 10px auto;
+}
+
+.infos-table th{
+    background-color: #bcdeff;
+}
+
+.infos-table td{
+    background-color: #9aa9b7;
+}

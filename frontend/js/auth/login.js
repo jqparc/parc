@@ -1,4 +1,6 @@
 // frontend/js/auth/login.js
+import { API_BASE_URL } from '../config.js';
+
 document.getElementById('login-btn').addEventListener('click', async () => {
     const usernameInput = document.getElementById('username').value;
     const passwordInput = document.getElementById('password').value;
@@ -8,9 +10,10 @@ document.getElementById('login-btn').addEventListener('click', async () => {
     const loginData = { username: usernameInput, password: passwordInput };
 
     try {
-        const response = await fetch('/api/login', {
+        const response = await fetch(`${API_BASE_URL}/api/users/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify(loginData)
         });
 
