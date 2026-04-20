@@ -1,11 +1,15 @@
 # db/database.py
+import os
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
+load_dotenv()
+
 # 1. 데이터베이스 파일 주소 
 # (이 코드를 실행하면 프로젝트 최상위 폴더에 'parc.db'라는 파일이 자동으로 생깁니다!)
-SQLALCHEMY_DATABASE_URL = "sqlite:///./parc.db"
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./parc.db")
 
 # 2. 파이썬과 DB를 연결해주는 '엔진(통신 케이블)'
 engine = create_engine(

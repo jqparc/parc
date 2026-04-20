@@ -1,4 +1,4 @@
-# routers/users.py
+# routers/api/users.py
 from fastapi import APIRouter, Depends, Request, Response, HTTPException # Depends 추가!
 from sqlalchemy.orm import Session
 from schemas.user_schema import UserSignup, UserLogin

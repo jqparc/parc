@@ -1,5 +1,12 @@
 # core/security.py
+import os
+from dotenv import load_dotenv
 from passlib.context import CryptContext
+
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY", "fallback_secret_key_for_development_only")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
 # Bcrypt 알고리즘을 사용하겠다고 설정합니다.
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
