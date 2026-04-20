@@ -8,12 +8,18 @@ from models import user_model
 
 user_model.Base.metadata.create_all(bind=engine)
 
+origins = [
+    "http://localhost:8000",    # 프론트엔드가 실행되는 주소
+    "http://127.0.0.1:8000",
+    "http://localhost:5500",    # Live Server 사용 시
+]
+
 app = FastAPI()
 
 # 1. CORS 보안 설정
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

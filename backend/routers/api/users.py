@@ -28,7 +28,7 @@ def login(user: UserLogin, response: Response, db: Session = Depends(get_db)): #
         # 2. 로그인이 성공했다면, 서버가 직접 'access_token'이라는 이름의 쿠키를 굽습니다!
         response.set_cookie(
             key="access_token",                 # 쿠키 이름
-            value=f"Bearer {result['access_token']}", # 쿠키 내용 (발급받은 토큰)
+            value=result['access_token'],       # 쿠키 내용 (발급받은 토큰)
             httponly=True,                      # ⭐ 핵심! 자바스크립트가 절대 못 건드리게 함 ⭐
             secure=False,                       # 지금은 로컬(http) 개발 중이므로 False. 나중에 실제 배포(https)할 땐 True로!
             samesite="lax",                     # 다른 사이트에서 함부로 쿠키를 못 쓰게 방어 (CSRF 방어)
@@ -42,21 +42,19 @@ def login(user: UserLogin, response: Response, db: Session = Depends(get_db)): #
 
 @router.post("/logout")
 async def logout(response: Response):
-    # 쿠키를 삭제합니다.
+    
     response.delete_cookie(key="access_token")
     return {"success": True, "message": "로그아웃 되었습니다."}
 
 @router.get("/me")
 async def get_my_info(request: Request, db: Session = Depends(get_db)):
-    # 1. 브라우저가 보낸 쿠키에서 'access_token'을 꺼냅니다.
+    
     token = request.cookies.get("access_token")
     
     if not token:
         return {"loggedIn": False}
 
-    try:
-        # 2. "Bearer <토큰>" 형태이므로 앞부분을 떼어내고 검증합니다.
-        token = token.replace("Bearer ", "")
+    try:        
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub") # 토큰에 담았던 유저 아이디 추출
         
@@ -68,5 +66,5 @@ async def get_my_info(request: Request, db: Session = Depends(get_db)):
                 "username": username
             }
         
-    except JWTError:
+    except JWTError:        
         return {"loggedIn": False}
