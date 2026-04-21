@@ -1,6 +1,30 @@
-frontend/               # 순수 HTML, CSS, JS만 위치
-    ├── index.html 
-    ├── styles/      
-    ├── templates/
-    └── scripts/     
-        └── api.js
+frontend/              
+├── css/      
+│   ├── pagination.css
+│   ├── style.css
+ |    └── table.css
+├── img/      
+├── js/
+│   ├── auth/
+│   │   ├── check_auth.js
+│   │   ├── login.js
+│   │   ├── mypage.js
+│   │   └── signup.js
+│   ├── boards/
+│   │   └── economy-infos.js
+│   ├── config.js
+ |    └── index.js
+├── pages/     
+│   ├── asset/
+│   │   └── portfolio.html
+│   ├── auth/
+│   │   ├── login.html
+│   │   ├── mypage.html
+│   │   └── signup.html
+│   ├── economy/
+│   │   ├── indicators.html
+│   │   ├── infos.html
+│   │   └── news.html
+│   └── 
+├── base.html
+└── index.html
