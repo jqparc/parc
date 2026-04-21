@@ -21,7 +21,7 @@ document.getElementById('signup-btn').addEventListener('click', async () => {
 
     try {
         // 3. 백엔드 주방 창구(/api/signup)로 데이터 쏘기 (POST 요청)
-        const response = await fetch('/api/signup', {
+        const response = await fetch('/api/users/signup', {
             method: 'POST', // "데이터를 새로 만들겠다!"는 뜻
             headers: {
                 'Content-Type': 'application/json' // "내가 보내는 보따리는 JSON 형식이야!"라고 알려줌

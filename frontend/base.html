@@ -7,6 +7,7 @@
     
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/table.css">
+    <link rel="stylesheet" href="/static/css/pagination.css">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -26,6 +27,7 @@
             <a href="/signup" class="signup-btn">회원가입</a>
         </nav>
     </header>
+
     <nav class="nav-menu">      
         {% for menu in top_tabs %}
             <a href="{{ menu.url }}" class="top-button {% if active_top == menu.id %}active{% endif %}">

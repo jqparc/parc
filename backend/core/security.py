@@ -1,9 +1,14 @@
 # core/security.py
 import os
+from fastapi import Request, HTTPException, Depends
+from jose import jwt, JWTError
+from sqlalchemy.orm import Session
+from db.database import get_db
 from dotenv import load_dotenv
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
-from jose import jwt 
+
+from models.user_model import User
 
 load_dotenv()
 
@@ -28,3 +33,24 @@ def create_access_token(data: dict):
     to_encode.update({"exp": expire}) # 만료 시간 도장 찍기
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
+def get_current_user(request: Request, db: Session = Depends(get_db)):
+    token = request.cookies.get("access_token")
+    if not token:
+        # 로그인이 안 되어 있으면 에러를 던짐
+        raise HTTPException(status_code=401, detail="로그인이 필요합니다.")
+
+    try:
+        token = token.replace("Bearer ", "")
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise HTTPException(status_code=401, detail="인증 실패")
+            
+        # DB에서 실제 유저를 찾아서 반환
+        user = db.query(User).filter(User.username == username).first()
+        if user is None:
+            raise HTTPException(status_code=401, detail="사용자를 찾을 수 없습니다.")
+        return user
+    except JWTError:
+        raise HTTPException(status_code=401, detail="토큰이 유효하지 않습니다.")

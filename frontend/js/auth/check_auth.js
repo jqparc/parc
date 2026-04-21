@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
  */
 function showUserMenu(container, username) {
     container.innerHTML = `
-        <span class="user-info"><strong>${username}</strong>님 환영합니다</span>
+        <a href="/mypage" class="user-info"><strong>${username}</strong>님 환영합니다</a>
         <a href="#" id="logout-btn" class="login-btn" style="margin-left: 10px;">로그아웃</a>
     `;
 

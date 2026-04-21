@@ -12,7 +12,9 @@ fastapi_project/
 ├── db/             
 │   └── database.py
 │
-├── models/              
+├── models/    
+│   ├── board_model.py
+│   ├── post_model.py          
 │   └── user_model.py
 │
 ├── routers/              

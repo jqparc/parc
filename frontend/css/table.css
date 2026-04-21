@@ -1,25 +1,78 @@
+/* frontend/css/style.css */
+
 .table-container {
+    flex: 1;
+    background-color: #652c2c;
     width: 100%;
-    background-color: #e5e8ff;
-    border-radius: 8px;
 }
 
-.common-table{
-    background-color: #8287b4;
-    width: 95%;
-    margin: 10px auto;
+.infos-table {
+    width: 100%;
+    /* border-collapse: collapse;  */
+    text-align: center;
+    font-size: 15px;
 }
 
-.infos-table{
-    background-color: #a5aeff;
-    width: 95%;
-    margin: 10px auto;
+/* 헤더 (제목 줄) 스타일 */
+.infos-table th {
+    padding: 15px 10px;
+    border-top: 2px solid #333;   /* 위쪽 굵은 선 */
+    border-bottom: 1px solid #ddd;
+    background-color: #f9f9f9;
+    font-weight: 600;
+    color: #333;
 }
 
-.infos-table th{
-    background-color: #bcdeff;
+/* 열 너비 지정 */
+.col-num { width: 10%; }
+.col-title { width: 70%; }
+.col-date { width: 20%; }
+
+/* 본문 (데이터 줄) 스타일 */
+.infos-table td {
+    padding: 15px 10px;
+    border-bottom: 1px solid #eee; /* 얇은 가로선 */
+    color: #555;
 }
 
-.infos-table td{
-    background-color: #9aa9b7;
+/* 제목은 왼쪽 정렬 */
+.infos-table .td-title {
+    text-align: left;
+    padding-left: 20px;
+}
+
+.infos-table .td-title a {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.2s;
+}
+
+.infos-table .td-title a:hover {
+    color: #007bff; /* 마우스 올리면 파란색으로 */
+    text-decoration: underline;
+}
+
+/* 마우스 호버 효과 (줄 단위) */
+.infos-table tbody tr:hover {
+    background-color: #f5f7fa;
+}
+
+/* 페이지네이션 스타일 (이전과 동일) */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 30px;
+}
+.page-btn {
+    padding: 8px 14px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.page-btn.active {
+    background-color: #333;
+    color: white;
+    border-color: #333;
 }

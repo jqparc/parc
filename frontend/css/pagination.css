@@ -1,0 +1,15 @@
+.pagination {
+    display: flex;
+    justify-content: center;
+}
+.page-btn {
+    padding: 5px 12px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+}
+.page-btn.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}

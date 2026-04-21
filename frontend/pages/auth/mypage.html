@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="main-container">
+    <h2>내 정보 관리</h2>
+    <h5>개인정보수정</h5>
+    <div class="profile-card">
+        <div class="info-group">
+            <label>아이디</label>
+            <input type="text" id="username" disabled> </div>
+        <div class="info-group">
+            <label>새 비밀번호</label>
+            <input type="password" id="new-password" placeholder="변경할 비밀번호를 입력하세요">
+        </div>
+        <div class="info-group">
+            <label>비밀번호 확인</label>
+            <input type="password" id="confirm-password" placeholder="비밀번호를 한번 더 입력하세요">
+        </div>
+        <button onclick="updateProfile()" class="update-btn">정보 수정하기</button>
+    </div>
+</div>
+
+<style>
+    .profile-card {
+        background: #fff;
+        padding: 30px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    .info-group {
+        margin-bottom: 20px;
+    }
+    .info-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+    .info-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    .update-btn {
+        width: 100%;
+        padding: 12px;
+        background-color: rgb(255, 101, 101);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}

@@ -1,7 +1,7 @@
 # backend/routers/index.py
 from fastapi import APIRouter
-from .pages import asset_pages, main_pages, auth_pages, economy_pages # 페이지 라우터들
-from .api import users # API 라우터
+from .pages import asset_pages, main_pages, auth_pages, economy_pages
+from .api import users, posts
 
 router = APIRouter()
 
@@ -13,5 +13,6 @@ router.include_router(asset_pages.router, prefix="/asset") # 주소 앞에 /econ
 
 # 2. 데이터 처리용 API 라우터들을 하나로 합침
 router.include_router(users.router, prefix="/api/users")
+router.include_router(posts.router, prefix="/api/posts")
 
 # 이제 이 router 변수 하나에 모든 길(Route)이 담겼습니다!

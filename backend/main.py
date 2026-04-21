@@ -4,14 +4,11 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from routers import index # 마스터 라우터 하나만 임포트
 from db.database import engine
-from models import user_model
-
-user_model.Base.metadata.create_all(bind=engine)
+from models import Base
+Base.metadata.create_all(bind=engine)
 
 origins = [
-    "http://localhost:8000",    # 프론트엔드가 실행되는 주소
-    "http://127.0.0.1:8000",
-    "http://localhost:5500",    # Live Server 사용 시
+    "http://127.0.0.1:8000"  # Live Server 사용 시
 ]
 
 app = FastAPI()
