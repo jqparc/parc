@@ -2,12 +2,12 @@
 import { API_BASE_URL } from '../config.js';
 
 document.getElementById('login-btn').addEventListener('click', async () => {
-    const usernameInput = document.getElementById('username').value;
+    const userIdInput   = document.getElementById('user_id').value;
     const passwordInput = document.getElementById('password').value;
 
-    if (!usernameInput || !passwordInput) return;
+    if (!userIdInput || !passwordInput) return;
 
-    const loginData = { username: usernameInput, password: passwordInput };
+    const loginData = { user_id: userIdInput, password: passwordInput };
 
     try {
         const response = await fetch(`${API_BASE_URL}/api/users/login`, {

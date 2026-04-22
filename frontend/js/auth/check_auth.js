@@ -25,8 +25,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const data = await response.json();
 
         // 2. 서버 응답 데이터에 따른 분기 처리
-        if (data.loggedIn && data.username) {
-            showUserMenu(authNav, data.username);
+        if (data.loggedIn && data.nickname) {
+            showUserMenu(authNav, data.nickname);
         } else {
             showGuestMenu(authNav);
         }
@@ -40,9 +40,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 /**
  * 로그인 성공 시: 사용자 정보와 로그아웃 버튼 표시
  */
-function showUserMenu(container, username) {
+function showUserMenu(container, nickname) {
     container.innerHTML = `
-        <a href="/mypage" class="user-info"><strong>${username}</strong>님 환영합니다</a>
+        <a href="/mypage" class="user-info"><strong>${nickname}</strong>님 환영합니다</a>
         <a href="#" id="logout-btn" class="login-btn" style="margin-left: 10px;">로그아웃</a>
     `;
 
