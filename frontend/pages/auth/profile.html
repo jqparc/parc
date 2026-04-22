@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h2>내 정보 수정 🛠️</h2>
+        <p>수정할 정보를 입력한 뒤 저장해주세요.</p>
+
+        <div class="form-group">
+            <label for="user_id">아이디</label>
+            <input type="text" id="user_id" readonly disabled>
+        </div>
+
+        <div class="form-group">
+            <label for="nickname">닉네임</label>
+            <input type="text" id="nickname" placeholder="새로운 닉네임 입력">
+        </div>
+
+        <div class="form-group">
+            <label for="phone">전화번호</label>
+            <input type="tel" id="phone" placeholder="010-1234-5678">
+        </div>
+
+        <button id="update-btn">저장하기</button>
+    </div>
+
+    <script src="/static/js/auth/profile.js"></script>
+{% endblock %}

@@ -29,3 +29,10 @@ class UserResponse(UserBase):
 class UserLogin(BaseModel):
     user_id: str = Field(..., description="아이디")
     password: str = Field(..., description="비밀번호")    
+
+class UserUpdate(BaseModel):
+    nickname: Optional[str] = None
+
+class PasswordChangeRequest(BaseModel):
+    current_password: str  # 현재 비밀번호 (본인 확인용)
+    new_password: str      # 새 비밀번호

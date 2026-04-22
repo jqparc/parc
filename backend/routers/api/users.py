@@ -1,8 +1,8 @@
 # backend/routers/api/users.py
 from fastapi import APIRouter, Depends, Request, Response
 from sqlalchemy.orm import Session
-from schemas.user_schema import UserCreate, UserLogin # 👈 UserSignup 대신 UserCreate 사용
-from services.user_service import create_new_user, authenticate_user
+from schemas.user_schema import UserCreate, UserLogin, UserUpdate, UserResponse, PasswordChangeRequest
+from services.user_service import create_new_user, authenticate_user, modify_user_profile, change_user_password
 from db.database import get_db
 from jose import jwt, JWTError
 from core.security import SECRET_KEY, ALGORITHM
@@ -60,13 +60,58 @@ async def get_my_info(request: Request, db: Session = Depends(get_db)):
         
         if not user:
             return {"loggedIn": False}
+        
+        user_info = UserResponse.model_validate(user).model_dump()        
             
         return {
                 "loggedIn": True, 
-                "user_id": user.user_id,
-                "nickname": user.nickname, 
-                "role": user.role
+                **user_info
             }
         
     except JWTError:
         return {"loggedIn": False}
+    
+@router.put("/me")
+async def update_my_info(update_data: UserUpdate, request: Request, db: Session = Depends(get_db)):
+    # 1. 쿠키에서 토큰 꺼내서 본인 확인
+    token = request.cookies.get("access_token")
+    if not token:
+        return {"success": False, "message": "로그인이 필요합니다."}
+
+    try:
+        # 2. 토큰 해독하여 user_id 추출
+        token = token.replace("Bearer ", "")
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: str = payload.get("sub")
+        
+        if not user_id:
+            return {"success": False, "message": "유효하지 않은 토큰입니다."}
+            
+        # 3. 서비스 로직에 정보 수정 요청
+        result = modify_user_profile(db, user_id=user_id, update_data=update_data)
+        return result
+        
+    except JWTError:
+        return {"success": False, "message": "인증이 만료되었거나 잘못되었습니다."}    
+    
+@router.put("/me/password")
+async def update_password(
+    pw_data: PasswordChangeRequest, 
+    request: Request, 
+    db: Session = Depends(get_db)
+):
+    token = request.cookies.get("access_token")
+    if not token:
+        return {"success": False, "message": "로그인이 필요합니다."}
+
+    try:
+        token = token.replace("Bearer ", "")
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: str = payload.get("sub")
+        
+        # 서비스 로직 호출
+        result = change_user_password(db, user_id=user_id, pw_data=pw_data)
+        return result
+        
+    except JWTError:
+        return {"success": False, "message": "인증이 만료되었습니다."}

@@ -18,3 +18,11 @@ async def read_signup(request: Request):
 @router.get("/mypage")
 async def get_my_info_page(request: Request):
     return templates.TemplateResponse(request=request, name="pages/auth/mypage.html")
+
+@router.get("/profile")
+async def profile_page(request: Request):
+    return templates.TemplateResponse(request=request, name="pages/auth/profile.html")
+
+@router.get("/change-password")
+async def change_password_page(request: Request):
+    return templates.TemplateResponse(request=request, name="pages/auth/change-password.html")

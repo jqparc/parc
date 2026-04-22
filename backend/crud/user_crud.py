@@ -25,4 +25,13 @@ def create_user(db: Session, user_data: UserCreate, hashed_password: str):
     db.refresh(db_user)
     return db_user
 
-# 3. (추가 가능) 유저 삭제, 정보 수정 등...
+def update_user_info(db: Session, db_user: User, update_data: dict):
+    # 딕셔너리로 받은 수정 데이터(update_data)를 순회하면서
+    for key, value in update_data.items():
+        # 값이 비어있지 않은 항목만 기존 DB 유저(db_user)에 덮어씌웁니다.
+        if value is not None:
+            setattr(db_user, key, value)
+            
+    db.commit()       # 변경사항 확정
+    db.refresh(db_user) # 최신 상태로 동기화
+    return db_user

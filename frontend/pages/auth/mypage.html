@@ -3,21 +3,11 @@
 {% block content %}
 <div class="main-container">
     <h2>내 정보 관리</h2>
-    <h5>개인정보수정</h5>
-    <div class="profile-card">
-        <div class="info-group">
-            <label>아이디</label>
-            <input type="text" id="username" disabled> </div>
-        <div class="info-group">
-            <label>새 비밀번호</label>
-            <input type="password" id="new-password" placeholder="변경할 비밀번호를 입력하세요">
-        </div>
-        <div class="info-group">
-            <label>비밀번호 확인</label>
-            <input type="password" id="confirm-password" placeholder="비밀번호를 한번 더 입력하세요">
-        </div>
-        <button onclick="updateProfile()" class="update-btn">정보 수정하기</button>
-    </div>
+    <a href="/profile" class="aa">개인정보수정</a>
+    <a href="/change-password" class="aa">비밀번호변경</a>
+    <a href="#" class="aa">메뉴관리</a>
+    <a href="#" class="aa">탭관리</a>
+    <a href="#" class="aa">고객센터</a>
 </div>
 
 <style>
