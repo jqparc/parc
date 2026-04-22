@@ -1,4 +1,4 @@
-# core/security.py
+# backend/core/security.py
 import os
 from fastapi import Request, HTTPException, Depends
 from jose import jwt, JWTError
@@ -9,6 +9,7 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 
 from models.user_model import User
+from crud import user_crud
 
 load_dotenv()
 
@@ -43,12 +44,12 @@ def get_current_user(request: Request, db: Session = Depends(get_db)):
     try:
         token = token.replace("Bearer ", "")
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
+        user_id: str = payload.get("sub")
+        if user_id is None:
             raise HTTPException(status_code=401, detail="인증 실패")
             
         # DB에서 실제 유저를 찾아서 반환
-        user = db.query(User).filter(User.username == username).first()
+        user = user_crud.get_user_by_user_id(db, user_id=user_id)
         if user is None:
             raise HTTPException(status_code=401, detail="사용자를 찾을 수 없습니다.")
         return user

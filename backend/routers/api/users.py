@@ -5,8 +5,8 @@ from schemas.user_schema import UserCreate, UserLogin, UserUpdate, UserResponse,
 from services.user_service import create_new_user, authenticate_user, modify_user_profile, change_user_password
 from db.database import get_db
 from jose import jwt, JWTError
-from core.security import SECRET_KEY, ALGORITHM
-from crud import user_crud
+from core.security import get_current_user
+from models.user_model import User
 
 router = APIRouter()
 
@@ -44,74 +44,29 @@ async def logout(response: Response):
     return {"success": True, "message": "로그아웃 되었습니다."}
 
 @router.get("/me")
-async def get_my_info(request: Request, db: Session = Depends(get_db)):
-    # 1. 쿠키에서 토큰 꺼내기
-    token = request.cookies.get("access_token")
-    
-    if not token:
-        return {"loggedIn": False}
-
-    try:
-        # 2. 토큰 껍데기("Bearer ") 벗기고 해독하기
-        token = token.replace("Bearer ", "")
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: str = payload.get("sub") 
-        user = user_crud.get_user_by_user_id(db, user_id=user_id)
-        
-        if not user:
-            return {"loggedIn": False}
-        
-        user_info = UserResponse.model_validate(user).model_dump()        
-            
-        return {
-                "loggedIn": True, 
-                **user_info
-            }
-        
-    except JWTError:
-        return {"loggedIn": False}
+async def get_my_info(current_user: User = Depends(get_current_user)):
+    # get_current_user가 실패하면 자동으로 401 에러를 프론트엔드로 보냅니다.
+    user_info = UserResponse.model_validate(current_user).model_dump()        
+    return {
+        "loggedIn": True, 
+        **user_info
+    }
     
 @router.put("/me")
-async def update_my_info(update_data: UserUpdate, request: Request, db: Session = Depends(get_db)):
-    # 1. 쿠키에서 토큰 꺼내서 본인 확인
-    token = request.cookies.get("access_token")
-    if not token:
-        return {"success": False, "message": "로그인이 필요합니다."}
-
-    try:
-        # 2. 토큰 해독하여 user_id 추출
-        token = token.replace("Bearer ", "")
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: str = payload.get("sub")
-        
-        if not user_id:
-            return {"success": False, "message": "유효하지 않은 토큰입니다."}
-            
-        # 3. 서비스 로직에 정보 수정 요청
-        result = modify_user_profile(db, user_id=user_id, update_data=update_data)
-        return result
-        
-    except JWTError:
-        return {"success": False, "message": "인증이 만료되었거나 잘못되었습니다."}    
+async def update_my_info(
+    update_data: UserUpdate, 
+    current_user: User = Depends(get_current_user), # 토큰 검증 및 유저 정보 자동 로드
+    db: Session = Depends(get_db)
+):
+    # 이제 해독할 필요 없이 바로 서비스 로직 호출
+    result = modify_user_profile(db, user_id=current_user.user_id, update_data=update_data)
+    return result   
     
 @router.put("/me/password")
 async def update_password(
     pw_data: PasswordChangeRequest, 
-    request: Request, 
+    current_user: User = Depends(get_current_user), # 토큰 검증 및 유저 정보 자동 로드
     db: Session = Depends(get_db)
 ):
-    token = request.cookies.get("access_token")
-    if not token:
-        return {"success": False, "message": "로그인이 필요합니다."}
-
-    try:
-        token = token.replace("Bearer ", "")
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: str = payload.get("sub")
-        
-        # 서비스 로직 호출
-        result = change_user_password(db, user_id=user_id, pw_data=pw_data)
-        return result
-        
-    except JWTError:
-        return {"success": False, "message": "인증이 만료되었습니다."}
+    result = change_user_password(db, user_id=current_user.user_id, pw_data=pw_data)
+    return result
