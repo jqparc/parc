@@ -5,7 +5,8 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
-from routers import index # 마스터 라우터 하나만 임포트
+from api.v1.api_router import api_v1_router # 통합 라우터 임포트
+
 from db.database import engine
 from models import Base
 
@@ -17,7 +18,7 @@ origins = [
     "http://127.0.0.1:8000", 
 ]
 
-app = FastAPI()
+app = FastAPI(title="Parc API Server")
 
 # 1. CORS 보안 설정
 app.add_middleware(
@@ -27,9 +28,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# 2. 정적 파일 (CSS, JS) 연결
-app.mount("/static", StaticFiles(directory="../frontend"), name="static")
 
 @app.exception_handler(StarletteHTTPException)
 async def http_exception_handler(request: Request, exc: StarletteHTTPException):
@@ -56,4 +54,15 @@ async def global_exception_handler(request: Request, exc: Exception):
         },
     )
 
-app.include_router(index.router)
+@app.exception_handler(StarletteHTTPException)
+async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
+    """
+    모든 HTTPException을 프론트엔드가 이해하기 쉬운 
+    {"success": False, "message": "..."} 형태로 변환해서 응답합니다.
+    """
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"success": False, "message": exc.detail},
+    )
+
+app.include_router(api_v1_router, prefix="/api/v1")

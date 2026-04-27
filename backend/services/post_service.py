@@ -1,20 +1,18 @@
 # backend/services/post_service.py
 from sqlalchemy.orm import Session
-from models.post_model import Post # 앞서 만든 통합 Post 모델
 from schemas.post_schema import PostCreate
+from repositories import post_repository
 
 def create_new_post(db: Session, post_data: PostCreate, board_id: int, user_id: int):
-    # 1. DB에 넣을 객체 조립하기
-    new_post = Post(
+    # 비즈니스 로직이 있다면 여기서 처리 (예: 욕설 필터링, 권한 체크 등)
+    
+    # 순수 DB 저장 로직은 Repository로 위임
+    new_post = post_repository.create_post(
+        db=db,
         title=post_data.title,
         content=post_data.content,
         board_id=board_id,
         author_id=user_id
     )
-    
-    # 2. DB에 저장
-    db.add(new_post)
-    db.commit()
-    db.refresh(new_post) # 저장 후 생성된 id나 created_at 값을 가져옴
     
     return new_post

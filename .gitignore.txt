@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
+junq/
+.junq/
 
 # 데이터베이스 (개인 데이터가 들어있으므로 올리지 않음)
 *.db

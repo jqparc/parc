@@ -9,7 +9,7 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 
 from models.user_model import User
-from crud import user_crud
+from repositories import user_repository
 
 load_dotenv()
 
@@ -49,7 +49,7 @@ def get_current_user(request: Request, db: Session = Depends(get_db)):
             raise HTTPException(status_code=401, detail="인증 실패")
             
         # DB에서 실제 유저를 찾아서 반환
-        user = user_crud.get_user_by_user_id(db, user_id=user_id)
+        user = user_repository.get_user_by_user_id(db, user_id=user_id)
         if user is None:
             raise HTTPException(status_code=401, detail="사용자를 찾을 수 없습니다.")
         return user

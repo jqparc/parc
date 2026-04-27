@@ -2,8 +2,7 @@
 import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
 load_dotenv()
 
@@ -20,9 +19,9 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # 4. 우리가 만들 모든 DB 테이블(표)들의 '기본 뼈대'
-Base = declarative_base()
+class Base(DeclarativeBase):
+    pass
 
-# 5. DB에 접속할 때 쓸 함수 (나중에 라우터에서 사용합니다)
 def get_db():
     db = SessionLocal()
     try:
