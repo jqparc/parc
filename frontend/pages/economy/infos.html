@@ -1,7 +1,16 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>경제정보 - Parc</title>
+    <link rel="stylesheet" href="/css/style.css">
+    </head>
+<body>
+    <div id="header-placeholder"></div>
+        
+    <div id="nav-placeholder"></div>
 
-{% block content %}
-    <div class="main-container">
+    <main class="main-container">
         <div class="split-container">
             <div class="split-left">
                 <h2>경제 정보</h2>
@@ -28,5 +37,12 @@
 
             </div>
         </div>
-    </div>
-{% endblock %}
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script type="module" src="/js/load_layout.js"></script>
+    
+    <script type="module" src="/js/boards/economy-infos.js"></script>
+</body>
+</html>

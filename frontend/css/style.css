@@ -1,3 +1,4 @@
+
 body {
     min-height: 100vh;
     background-color: rgb(99, 85, 255);
@@ -28,7 +29,7 @@ header {
 
 main {
     background-color: rgb(141, 141, 141);
-    padding: 7px 2%;
+    /* padding: 7px 2%; */
     flex: 1;
     display: flex;      /* 자식인 board-container를 조절하기 위해 Flex 설정 */
     flex-direction: column; /* 세로 방향으로 정렬 */
