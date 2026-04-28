@@ -1,7 +1,16 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Parc</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+        
+    <div id="nav-placeholder"></div>
 
-{% block content %}
-    <div class="container">
+    <main class="container">
         <h2>내 정보 수정 🛠️</h2>
         <p>수정할 정보를 입력한 뒤 저장해주세요.</p>
 
@@ -21,7 +30,11 @@
         </div>
 
         <button id="update-btn">저장하기</button>
-    </div>
+    </main>
+    <div id="footer-placeholder"></div>
 
-    <script src="/static/js/auth/profile.js"></script>
-{% endblock %}
+    <script type="module" src="/js/auth/profile.js"></script>
+    <script type="module" src="/js/auth/signup.js"></script>
+    <script type="module" src="/js/load_layout.js"></script>
+</body>
+</html>

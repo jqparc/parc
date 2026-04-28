@@ -35,23 +35,3 @@ def create_access_token(data: dict):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-def get_current_user(request: Request, db: Session = Depends(get_db)):
-    token = request.cookies.get("access_token")
-    if not token:
-        # 로그인이 안 되어 있으면 에러를 던짐
-        raise HTTPException(status_code=401, detail="로그인이 필요합니다.")
-
-    try:
-        token = token.replace("Bearer ", "")
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: str = payload.get("sub")
-        if user_id is None:
-            raise HTTPException(status_code=401, detail="인증 실패")
-            
-        # DB에서 실제 유저를 찾아서 반환
-        user = user_repository.get_user_by_user_id(db, user_id=user_id)
-        if user is None:
-            raise HTTPException(status_code=401, detail="사용자를 찾을 수 없습니다.")
-        return user
-    except JWTError:
-        raise HTTPException(status_code=401, detail="토큰이 유효하지 않습니다.")

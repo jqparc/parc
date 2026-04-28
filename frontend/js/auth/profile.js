@@ -1,73 +1,58 @@
 // frontend/js/auth/profile.js
+import { fetchAPI } from '../api.js';
+import { CONFIG } from '../config.js';
 
-// 1. 페이지가 로드될 때 내 정보를 불러와서 화면에 채워 넣습니다.
+/**
+ * 1. 페이지 로드 시 내 정보 가져오기
+ */
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const response = await fetch('/api/users/me'); // 백엔드에 내 정보 요청
-        const result = await response.json();
+        // api.js의 fetchAPI가 쿠키(토큰)를 실어서 보냅니다.
+        const user = await fetchAPI('/users/me'); 
 
-        if (result.loggedIn) {
-            // 가져온 정보를 화면의 입력칸에 꽂아 넣습니다.
-            document.getElementById('user_id').value = result.user_id || '';
-            document.getElementById('nickname').value = result.nickname || '';
-            
-            // 💡 백엔드 /me 라우터에서 phone 값을 반환해주어야 여기에 표시됩니다.
-            if (result.phone) {
-                document.getElementById('phone').value = result.phone;
-            }
-        } else {
-            // 로그인이 안 되어 있다면 로그인 페이지로 돌려보냅니다.
-            alert("로그인이 필요한 서비스입니다.");
-            window.location.href = "/pages/auth/login"; 
-        }
+        // 서버에서 받아온 데이터를 입력 칸에 채웁니다.
+        // 백엔드 UserResponse 스키마 필드명과 일치해야 합니다.
+        document.getElementById('user_id').value = user.user_id;
+        document.getElementById('nickname').value = user.nickname || '';
+        document.getElementById('phone').value = user.phone || '';
+
     } catch (error) {
-        console.error("정보를 불러오는 중 에러 발생:", error);
+        console.error("사용자 정보 로드 실패:", error);
+        // 401 에러(로그인 안됨) 등이 발생하면 로그인 페이지로 리다이렉트
+        alert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
+        window.location.href = CONFIG.PAGE_URL.LOGIN;
     }
 });
 
-// 2. '저장하기' 버튼 클릭 시 정보 수정 요청을 보냅니다.
+/**
+ * 2. 정보 수정 요청 (PUT)
+ */
 document.getElementById('update-btn').addEventListener('click', async () => {
-    // 입력된 값 가져오기 (양쪽 공백 제거)
     const nicknameInput = document.getElementById('nickname').value.trim();
     const phoneInput = document.getElementById('phone').value.trim();
 
-    // 빈 칸 방지 (DB에 필수값으로 설정했으므로 프론트에서도 막아줍니다)
-    if (!nicknameInput) {
-        alert("닉네임을 입력해주세요.");
-        return;
-    }
-    if (!phoneInput) {
-        alert("전화번호를 입력해주세요.");
-        return;
-    }
+    // 유효성 검사
+    if (!nicknameInput) { alert("닉네임을 입력해주세요."); return; }
+    if (!phoneInput) { alert("전화번호를 입력해주세요."); return; }
 
-    // 서버로 보낼 데이터 포장 (UserUpdate 스키마 형태)
     const updateData = {
         nickname: nicknameInput,
         phone: phoneInput
     };
 
     try {
-        // PUT 메서드로 수정 요청 보내기
-        const response = await fetch('/api/users/me', {
+        // api.js를 통해 PUT 요청 전송
+        const result = await fetchAPI('/users/me', {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
             body: JSON.stringify(updateData)
         });
 
-        const result = await response.json();
+        alert("정보가 성공적으로 수정되었습니다! ✨");
+        // 성공 시 정보를 최신화하기 위해 페이지 새로고침
+        window.location.reload();
 
-        if (result.success) {
-            alert(result.message);
-            // 성공 시 새로고침하여 바뀐 정보를 다시 화면에 깔끔하게 반영합니다.
-            window.location.reload(); 
-        } else {
-            alert("수정 실패: " + result.message);
-        }
     } catch (error) {
-        console.error("수정 요청 중 에러 발생:", error);
-        alert("서버와 연결할 수 없습니다. 잠시 후 다시 시도해주세요.");
+        console.error("수정 요청 에러:", error);
+        alert("수정 실패: " + error.message);
     }
 });

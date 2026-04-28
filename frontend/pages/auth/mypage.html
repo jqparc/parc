@@ -1,47 +1,26 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Parc</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+        
+    <div id="nav-placeholder"></div>
+    <main class="main-container">
+        <h2>내 정보 관리</h2>
+        <a href="profile.html" class="aa">개인정보수정</a>
+        <a href="change-password.html" class="aa">비밀번호변경</a>
+        <a href="#" class="aa">메뉴관리</a>
+        <a href="#" class="aa">탭관리</a>
+        <a href="#" class="aa">고객센터</a>
+    </main>
 
-{% block content %}
-<div class="main-container">
-    <h2>내 정보 관리</h2>
-    <a href="/profile" class="aa">개인정보수정</a>
-    <a href="/change-password" class="aa">비밀번호변경</a>
-    <a href="#" class="aa">메뉴관리</a>
-    <a href="#" class="aa">탭관리</a>
-    <a href="#" class="aa">고객센터</a>
-</div>
+    <div id="footer-placeholder"></div>
 
-<style>
-    .profile-card {
-        background: #fff;
-        padding: 30px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        max-width: 500px;
-        margin: 0 auto;
-    }
-    .info-group {
-        margin-bottom: 20px;
-    }
-    .info-group label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: bold;
-    }
-    .info-group input {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-    .update-btn {
-        width: 100%;
-        padding: 12px;
-        background-color: rgb(255, 101, 101);
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: bold;
-    }
-</style>
-{% endblock %}
+    <script type="module" src="/js/auth/signup.js"></script>
+    <script type="module" src="/js/load_layout.js"></script>
+</body>
+</html>

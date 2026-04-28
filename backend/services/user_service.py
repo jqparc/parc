@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from repositories.user_repository import UserRepository
-from schemas.user_schema import UserCreate, UserLogin
+from schemas.user_schema import UserCreate, UserLogin, PasswordChange
 from core.security import get_password_hash, verify_password, create_access_token
 
 class UserService:
@@ -60,3 +60,38 @@ class UserService:
                 "access_token": access_token,
                 "token_type": "bearer"
             }    
+    
+    def update_profile(self, current_user, update_data):
+        # 1. 닉네임을 변경하려고 하는 경우 중복 체크
+        if update_data.nickname and update_data.nickname != current_user.nickname:
+            if self.user_repo.get_by_nickname(update_data.nickname):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="이미 사용 중인 닉네임입니다."
+                )
+
+        # 2. 변경된 데이터만 추출
+        update_dict = update_data.model_dump(exclude_unset=True)
+
+        # 3. DB 객체에 반영 (SQLAlchemy 세션을 활용한 보편적인 업데이트 방식)
+        for key, value in update_dict.items():
+            setattr(current_user, key, value)
+
+        self.user_repo.db.commit()
+        self.user_repo.db.refresh(current_user)
+
+        return {"success": True, "message": "정보가 성공적으로 수정되었습니다! ✨"}
+    
+    def change_password(self, current_user, pw_data : PasswordChange):
+        # 1. 현재 비밀번호가 맞는지 확인
+        if not verify_password(pw_data.current_password, current_user.password):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="현재 비밀번호가 일치하지 않습니다."
+            )
+        
+        # 2. 새 비밀번호 암호화 후 저장
+        current_user.password = get_password_hash(pw_data.new_password)
+        self.user_repo.db.commit()
+        
+        return {"success": True, "message": "비밀번호가 성공적으로 변경되었습니다."}

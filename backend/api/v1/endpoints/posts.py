@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from db.database import get_db
-from core.security import get_current_user # 이전에 쿠키로 인증하게 만든 함수
+from api.v1.dependencies.auth_deps import get_current_user
 from models.user_model import User
 from models.board_model import Board
 from models.post_model import Post

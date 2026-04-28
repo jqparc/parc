@@ -38,7 +38,20 @@ export async function fetchAPI(endpoint, options = {}) {
         const data = await response.json().catch(() => ({}));
 
         if (!response.ok) {
-            throw new Error(data.detail || `서버 에러 발생: ${response.status}`);
+            let errorMessage = `서버 에러 발생: ${response.status}`;
+            try {
+                // 백엔드에서 보내준 에러 JSON 데이터를 읽어옵니다.
+                const errorData = await response.json();
+                // FastAPI는 에러 메시지를 주로 'detail' 이라는 키워드에 담아 보냅니다.
+                if (errorData && errorData.detail) {
+                    errorMessage = errorData.detail;
+                }
+            } catch (e) {
+                // JSON 파싱 실패 시 기본 에러 메시지 유지
+            }
+            
+            // 최종적으로 알아듣기 쉬운 에러 메시지를 던집니다.
+            throw new Error(errorMessage);
         }
 
         return data; 

@@ -30,7 +30,11 @@ app.add_middleware(
 )
 
 @app.exception_handler(StarletteHTTPException)
-async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
+    """
+    모든 HTTPException을 프론트엔드가 이해하기 쉬운 
+    {"success": False, "message": "..."} 형태로 변환해서 응답합니다.
+    """
     return JSONResponse(
         status_code=exc.status_code,
         content={
@@ -43,26 +47,14 @@ async def http_exception_handler(request: Request, exc: StarletteHTTPException):
 # 예상치 못한 서버 내부 에러 (500)
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    # 실제 운영 시에는 에러 로깅을 추가해야 합니다 (예: Sentry, Python logging)
     print(f"서버 에러 발생: {exc}") 
     return JSONResponse(
         status_code=500,
         content={
             "success": False, 
             "message": "서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.", 
-            "error": str(exc) # 개발 중에만 보이게 하거나 나중에 숨길 수 있습니다.
+            "error": str(exc) # 개발 중에만 활성화
         },
-    )
-
-@app.exception_handler(StarletteHTTPException)
-async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
-    """
-    모든 HTTPException을 프론트엔드가 이해하기 쉬운 
-    {"success": False, "message": "..."} 형태로 변환해서 응답합니다.
-    """
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"success": False, "message": exc.detail},
     )
 
 app.include_router(api_v1_router, prefix="/api/v1")

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, status, Response
-from schemas.user_schema import UserCreate, UserResponse, UserLogin
+from schemas.user_schema import UserCreate, UserResponse, UserLogin, UserUpdate, PasswordChange
 from services.user_service import UserService
 from models.user_model import User # 모델 추가
 # 🔥 의존성을 전용 폴더에서 가져옵니다.
@@ -22,6 +22,15 @@ def read_user_me(current_user: User = Depends(get_current_user)):
     토큰이 없거나 이상하면 알아서 401 에러를 튕겨냅니다.
     """
     return current_user
+
+@router.put("/me")
+def update_user_me(
+    update_data: UserUpdate,
+    current_user: User = Depends(get_current_user),
+    service: UserService = Depends(get_user_service)
+):
+    # current_user(현재 로그인된 유저 객체)와 프론트엔드에서 받은 update_data를 서비스로 넘깁니다.
+    return service.update_profile(current_user, update_data)
 
 @router.post("/login")
 def login(
@@ -50,3 +59,11 @@ def logout(response: Response):
     # 로그아웃은 단순히 발급된 쿠키를 삭제(만료) 시키는 것으로 구현합니다.
     response.delete_cookie("access_token")
     return {"success": True, "message": "성공적으로 로그아웃 되었습니다."}
+
+@router.put("/me/password")
+def change_my_password(
+    pw_data: PasswordChange,
+    current_user: User = Depends(get_current_user),
+    service: UserService = Depends(get_user_service)
+):
+    return service.change_password(current_user, pw_data)
