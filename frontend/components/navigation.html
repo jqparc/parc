@@ -1,2 +1,16 @@
-<nav class="nav-menu" id="nav-menu-container"></nav>
-<nav class="nav-tab" id="nav-tabs-container"></nav>
+<nav>
+    <!-- href 대신 data-link 속성을 사용하거나 이벤트 리스너에서 기본 동작을 막습니다 -->
+    <a href="/economy/infos" class="nav-link" data-link>경제</a>
+    <a href="/asset/portfolio" class="nav-link" data-link>자산 포트폴리오</a>
+</nav>
+
+<script type="module">
+    import { navigateTo } from '/js/router.js';
+
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault(); // a 태그의 기본 이동 방지 (화면 깜빡임 차단)
+            navigateTo(e.target.getAttribute('href')); // 라우터 함수 호출
+        });
+    });
+</script>

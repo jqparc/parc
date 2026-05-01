@@ -2,7 +2,6 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
-from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.v1.api_router import api_v1_router # 통합 라우터 임포트
@@ -15,7 +14,6 @@ Base.metadata.create_all(bind=engine)
 origins = [
     "http://127.0.0.1:5500",
     "http://localhost:5500",
-    "http://127.0.0.1:8000", 
 ]
 
 app = FastAPI(title="Parc API Server")
