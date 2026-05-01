@@ -5,8 +5,8 @@ export const CONFIG = {
     
     // 페이지 이동 경로 (Live Server 기준)
     PAGE_URL: {
-        LOGIN: '/pages/auth/login.html',
-        INDEX: '/index.html',
-        MYPAGE: '/pages/auth/mypage.html'
+        LOGIN: '/login',
+        INDEX: '/',
+        MYPAGE: '/mypage'
     }
 };

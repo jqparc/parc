@@ -1,51 +1,33 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>경제정보 - Parc</title>
-    <link rel="stylesheet" href="/css/style.css">
-    </head>
-<body>
-    <div id="header-placeholder"></div>
-        
-    <div id="nav-placeholder"></div>
 
-    <main class="container">
-        <h2>새로운 계정 만들기 🌱</h2>
-        <p>환영합니다! 정보를 입력해주세요.</p>
+<main class="container">
+    <h2>새로운 계정 만들기 z🌱</h2>
+    <p>환영합니다! 정보를 입력해주세요.</p>
 
-        <div class="form-group">
-            <label for="user_id">아이디 <small>(4~20자)</small></label>
-            <input type="text" id="user_id" placeholder="아이디 입력" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="password">비밀번호 <small>(8자 이상, 영문+숫자 포함)</small></label>
-            <input type="password" id="password" placeholder="비밀번호 입력" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="confirm_password">비밀번호 확인</label>
-            <input type="password" id="confirm_password" placeholder="비밀번호 다시 입력" required>
-            <small id="password_msg" style="display:none; margin-top: 5px;"></small>
-        </div>
+    <div class="form-group">
+        <label for="user_id">아이디 <small>(4~20자)</small></label>
+        <input type="text" id="user_id" placeholder="아이디 입력" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="password">비밀번호 <small>(8자 이상, 영문+숫자 포함)</small></label>
+        <input type="password" id="password" placeholder="비밀번호 입력" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="confirm_password">비밀번호 확인</label>
+        <input type="password" id="confirm_password" placeholder="비밀번호 다시 입력" required>
+        <small id="password_msg" style="display:none; margin-top: 5px;"></small>
+    </div>
 
-        <div class="form-group">
-            <label for="nickname">닉네임 <small>(2~20자)</small></label>
-            <input type="text" id="nickname" placeholder="닉네임 입력" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="phone">전화번호</label>
-            <input type="tel" id="phone" placeholder="010-1234-5678" required>
-        </div>
-        
-        <button id="signup-btn">가입하기</button>
-    </main>
-
-    <div id="footer-placeholder"></div>
-
-    <script type="module" src="/js/auth/signup.js"></script>
-    <script type="module" src="/js/load_layout.js"></script>
-</body>
-</html>
+    <div class="form-group">
+        <label for="nickname">닉네임 <small>(2~20자)</small></label>
+        <input type="text" id="nickname" placeholder="닉네임 입력" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="phone">전화번호</label>
+        <input type="tel" id="phone" placeholder="010-1234-5678" required>
+    </div>
+    
+    <button id="signup-btn">가입하기</button>
+</main>

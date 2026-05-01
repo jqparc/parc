@@ -1,61 +1,52 @@
 // frontend/js/components/navigation.js
 
-// 1. 메뉴 데이터 정의 (확장성을 고려한 구조)
-const navData = {
-    nav_menu: [
-        { id: 'economy', name: '경제지표', url: '/pages/economy/infos.html' },
-        { id: 'asset', name: '자산관리', url: '/pages/asset/portfolio.html' },
-        { id: 'board', name: '게시판', url: '/pages/board/list.html' } // 현재 /frontend/pages/board/ 폴더가 없으므로 추후 생성 필요
-    ],
-    nav_tab: [
-        { id: 'infos', parent: 'economy', name: '경제정보', url: '/pages/economy/infos.html' },
-        { id: 'news', parent: 'economy', name: '경제뉴스', url: '/pages/economy/news.html' },
-        { id: 'indicator', parent: 'economy', name: '지표상세', url: '/pages/economy/indicators.html' }
-        // 예시: 자산관리 하위 탭이 필요하다면 아래처럼 추가만 하면 자동으로 렌더링 됩니다.
-        // { id: 'portfolio', parent: 'asset', name: '내 포트폴리오', url: '/pages/asset/portfolio.html' }
-    ]
+// 메뉴 구성 데이터 (나중에 이 부분만 수정하면 메뉴가 관리됨)
+const NAV_CONFIG = {
+    economy: {
+        title: "경제",
+        basePath: "/economy",
+        tabs: [
+            { name: "경제 정보", href: "/economy/infos" },
+            { name: "경제 뉴스", href: "/economy/news" },
+            { name: "경제 지표", href: "/economy/indicators" }
+        ]
+    },
+    asset: {
+        title: "자산",
+        basePath: "/asset",
+        tabs: [
+            { name: "포트폴리오", href: "/asset/portfolio" }
+        ]
+    }
 };
 
 export function renderNavigation() {
-    // 2. DOM 요소 매핑 (HTML 파일과 ID 일치화)
-    const menuContainer = document.getElementById('nav-menu-container');
-    const tabContainer = document.getElementById('nav-tabs-container');
-    
-    // 네비게이션 영역이 없는 페이지면 조용히 종료
-    if (!menuContainer) return;
-
     const currentPath = window.location.pathname;
+    const navtopContainer = document.getElementById('nav-top');
+    const navbottomContainer = document.getElementById('nav-bottom');
 
-    // 3. 현재 활성화된 메인 메뉴(부모) ID 찾기
-    let activeParentId = null;
-    for (const menu of navData.nav_menu) {
-        // 현재 URL 경로가 메뉴 URL을 포함하거나, 해당 카테고리 폴더(/pages/economy/) 안에 있다면
-        if (currentPath.includes(menu.url) || currentPath.includes(`/pages/${menu.id}/`)) {
-            activeParentId = menu.id;
-            break;
-        }
-    }
+    if (!navtopContainer || !navbottomContainer) return;
 
-    // 4. 상단 메인 메뉴 렌더링
-    menuContainer.innerHTML = navData.nav_menu.map(menu => {
-        const isActive = (menu.id === activeParentId) ? 'active' : '';
-        // top-button 대신 css와 통일성을 위해 클래스명 부여 (필요시 수정 가능)
-        return `<a href="${menu.url}" class="top-button ${isActive}">${menu.name}</a>`;
-    }).join('');
+    // 1. 현재 어떤 카테고리(상단 메뉴)에 속해 있는지 찾기
+    const activeCategoryKey = Object.keys(NAV_CONFIG).find(key => 
+        currentPath.startsWith(NAV_CONFIG[key].basePath)
+    );
 
-    // 5. 하단 상세 탭 렌더링 (현재 활성화된 부모의 탭만 필터링)
-    if (tabContainer && activeParentId) {
-        const filteredTabs = navData.nav_tab.filter(tab => tab.parent === activeParentId);
-        
-        if (filteredTabs.length > 0) {
-            tabContainer.innerHTML = filteredTabs.map(tab => {
-                const isActive = currentPath.includes(tab.url) ? 'active' : '';
-                return `<a href="${tab.url}" class="tab-button ${isActive}">${tab.name}</a>`;
-            }).join('');
-            tabContainer.style.display = 'flex'; // 탭 영역 보이기
-        } else {
-            tabContainer.innerHTML = '';
-            tabContainer.style.display = 'none'; // 하위 탭이 없는 메뉴면 영역 숨기기
-        }
+    // 2. 상단 메뉴(nav-menu) 렌더링
+    navtopContainer.innerHTML = Object.keys(NAV_CONFIG).map(key => `
+        <a href="${NAV_CONFIG[key].tabs[0].href}" 
+           class="nav-link ${activeCategoryKey === key ? 'active' : ''}" 
+           data-link>${NAV_CONFIG[key].title}</a>
+    `).join('');
+
+    // 3. 하단 탭(nav-tab) 렌더링 (선택된 카테고리가 있을 때만)
+    if (activeCategoryKey) {
+        navbottomContainer.innerHTML = NAV_CONFIG[activeCategoryKey].tabs.map(tab => `
+            <a href="${tab.href}" 
+               class="nav-link ${currentPath === tab.href ? 'active' : ''}" 
+               data-link>${tab.name}</a>
+        `).join('');
+    } else {
+        navbottomContainer.innerHTML = '';
     }
 }

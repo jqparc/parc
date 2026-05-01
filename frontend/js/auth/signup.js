@@ -1,6 +1,7 @@
 // frontend/js/auth/signup.js
-import { fetchAPI } from '../api.js';
-import { CONFIG } from '../config.js';
+import { navigateTo } from "/js/router.js";
+import { fetchAPI } from '/js/api.js';
+import { CONFIG } from '/js/config.js';
 
 // 💡 실시간 비밀번호 일치 확인 로직
 const passwordEl = document.getElementById('password');
@@ -92,7 +93,7 @@ document.getElementById('signup-btn').addEventListener('click', async () => {
         alert("회원가입이 완료되었습니다! 로그인 해주세요.");
         
         // 가입 성공 후 config.js에 정의된 로그인 페이지로 이동
-        window.location.href = CONFIG.PAGE_URL.LOGIN;
+        navigateTo(CONFIG.PAGE_URL.LOGIN);
 
     } catch (error) {
         // api.js에서 던진 에러 메시지(error.message)를 띄워줍니다. (예: 이미 존재하는 아이디입니다 등)

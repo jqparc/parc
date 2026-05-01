@@ -1,5 +1,5 @@
 // frontend/js/api.js
-import { CONFIG } from './config.js';
+import { CONFIG } from '/js/config.js';
 
 export async function fetchAPI(endpoint, options = {}) {
     const url = `${CONFIG.BASE_URL}${endpoint}`;

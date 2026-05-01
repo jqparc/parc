@@ -1,37 +1,68 @@
 // frontend/js/auth/login.js
+import { navigateTo } from "/js/router.js";
+import { fetchAPI } from '/js/api.js';
+import { CONFIG } from '/js/config.js';
 
-// 이벤트 핸들러 함수는 반드시 밖으로 빼두어야 나중에 removeEventListener로 지울 수 있습니다.
 const handleLoginSubmit = async (e) => {
+    // 1. 브라우저의 기본 폼 제출(새로고침 및 URL 쿼리스트링 추가) 방지! ⭐ 가장 중요
     e.preventDefault();
-    
-    // 이메일과 비밀번호 값을 가져와 api.js의 fetch 로직을 태우는 코드가 들어갑니다.
-    const email = document.getElementById("email").value;
+
+    // 2. input 필드의 값 가져오기
+    const user_id = document.getElementById("user_id").value;
     const password = document.getElementById("password").value;
-    
-    console.log("로그인 시도:", email);
-    // await apiRequest('/api/v1/auth/login', { method: 'POST', ... })
+
+    // 간단한 프론트엔드 유효성 검사
+    if (!user_id || !password) {
+        alert("이메일과 비밀번호를 모두 입력해주세요.");
+        return;
+    }
+
+    try {
+        // 3. 백엔드(FastAPI)로 로그인 요청 (fetch API)
+        
+        const data = await fetchAPI('/users/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ user_id: user_id, password: password }),
+            credentials: 'include' // 백엔드에서 내려주는 HttpOnly 쿠키를 받기 위해 필수
+        });
+
+        console.log("로그인 성공:", data);
+        
+
+        // 4. 로그인 성공 시 메인 화면으로 이동 (임시 테스트용)
+        alert("로그인 성공! (API 통신 구현 전 임시 알림)");
+        
+        // 브라우저 주소를 메인('/')으로 바꾸고 화면을 다시 그립니다 (Step 3의 라우터 활용)
+        navigateTo(CONFIG.PAGE_URL.INDEX);
+        //navigateTo('/');
+
+    } catch (error) {
+        console.error("로그인 에러:", error);
+        alert("아이디 또는 비밀번호를 확인해주세요.");
+    }
 };
 
 /**
- * 라우터가 페이지 HTML을 그린 직후 자동으로 호출하는 초기화 함수입니다.
- * DOM 요소를 찾고 이벤트를 등록하는 역할을 합니다.
+ * 라우터가 화면을 그린 후 호출하는 초기화 함수
  */
 export function init() {
-    console.log("로그인 페이지 로드됨");
     const loginForm = document.getElementById("login-form");
     if (loginForm) {
+        // 폼 제출 이벤트(Enter 키 포함)에 핸들러를 연결합니다.
         loginForm.addEventListener("submit", handleLoginSubmit);
     }
 }
 
 /**
- * 다른 페이지로 이동하기 직전에 라우터가 호출하는 정리 함수입니다.
- * 화면이 사라지기 전에 등록했던 이벤트를 모두 해제하여 메모리 누수를 막습니다.
+ * 라우터가 다른 화면으로 넘어가기 전 호출하는 정리 함수
  */
 export function cleanup() {
-    console.log("로그인 페이지 이벤트 정리됨");
     const loginForm = document.getElementById("login-form");
     if (loginForm) {
+        // 메모리 누수를 막기 위해 연결했던 이벤트를 해제합니다.
         loginForm.removeEventListener("submit", handleLoginSubmit);
     }
 }

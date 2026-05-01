@@ -1,8 +1,9 @@
 <header>
     <div>
-        <a href="/" class="logo-link">
+        <!-- 1. href를 루트("/")로 맞추고 data-link 추가 -->
+        <a href="/" class="logo-link" data-link>
             <div class="logo">
-                <!-- <img src="{{ url_for('static', path='img/logo.png') }}" alt="logo"> -->
+                <!-- 원칙 5: Jinja 언어 흔적({{ url_for... }}) 완전 삭제 -->
             </div>
             <div class="company-name">
                 <h1>Parc</h1>
@@ -10,7 +11,8 @@
         </a>
     </div>
     <nav class="auth-menu" id="header-auth-nav">
-        <a href="/pages/auth/login.html" class="login-btn">로그인</a>
-        <a href="/pages/auth/signup.html" class="signup-btn">회원가입</a>
+        <!-- 2. href를 router.js에 정의된 경로로 맞추고 data-link 추가 -->
+        <a href="/login" class="login-btn" data-link>로그인</a>
+        <a href="/signup" class="signup-btn" data-link>회원가입</a>
     </nav>
 </header>

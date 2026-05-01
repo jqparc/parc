@@ -1,10 +1,10 @@
 // frontend/js/load_layout.js
-import { renderNavigation } from './components/navigation.js';
+// 절대경로로 바로 지정
+import { renderNavigation } from '/js/components/navigation.js'; 
 
-// 1. 상대경로로 수정하여 MIME 에러 방지
 const GLOBAL_STYLES = [
-    '../css/style.css', 
-    '../css/table.css'
+    '/css/style.css', 
+    '/css/table.css'
 ];
 
 function injectGlobalStyles() {
@@ -17,11 +17,7 @@ function injectGlobalStyles() {
         }
     });
 }
-/**
- * 지정된 URL의 HTML 조각을 가져와 특정 ID의 DOM에 주입하는 함수
- * @param {string} targetId - HTML을 주입할 컨테이너의 ID
- * @param {string} htmlPath - 가져올 HTML 파일의 경로
- */
+
 export async function loadComponent(targetId, htmlPath, cssPath = null, jsPath = null) {
     try {
         const targetElement = document.getElementById(targetId);
@@ -50,21 +46,24 @@ export async function loadComponent(targetId, htmlPath, cssPath = null, jsPath =
 document.addEventListener("DOMContentLoaded", async () => {
     injectGlobalStyles();
 
-    // 2. HTML 컴포넌트 경로를 현재 파일 위치 기준으로 상대경로 적용
+    // 헬퍼 함수 없이 무조건 절대경로 사용
     await loadComponent(
         'header-container', 
-        '../components/header.html', 
+        '/components/header.html', 
         null, 
-        './auth/check_auth.js'
+        '/js/auth/check_auth.js'
     );
     
     await loadComponent(
         'nav-container', 
-        '../components/navigation.html',
+        '/components/navigation.html',
         null 
     );
 
     if (typeof renderNavigation === 'function') {
         renderNavigation();
     }
+
+    // 레이아웃 로드 완료 이벤트를 발생시켜 router.js가 이후 작업을 하도록 함
+    document.dispatchEvent(new Event("layoutLoaded"));
 });
