@@ -12,11 +12,6 @@ const routes = {
         js: null,
         auth: false
     },
-    "/asset/portfolio": {
-        html: "/pages/asset/portfolio.html",
-        js: null, 
-        auth: true
-    },
     "/login": {
         html: "/pages/auth/login.html",
         js: "/js/auth/login.js",
@@ -38,6 +33,10 @@ const routes = {
         html: "/pages/auth/change-password.html",
         js: "/js/auth/change-password.js"
     },
+    "/menu": {
+        html: "/pages/auth/menu.html",
+        js: "/js/auth/menu.js"
+    },
     "/economy/infos": {
         html: "/pages/economy/infos.html",
         js: "/js/boards/economy-infos.js" 
@@ -49,7 +48,16 @@ const routes = {
     "/economy/indicators": {
         html: "/pages/economy/indicators.html",
         js: null
-    }
+    },
+    "/asset": {
+        html: "/pages/asset/portfolio.html",
+        js: null
+    },
+    "/asset/portfolio": {
+        html: "/pages/asset/portfolio.html",
+        js: null, 
+        auth: true
+    },
 };
 
 const router = async () => {

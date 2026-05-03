@@ -25,7 +25,7 @@ export async function fetchAPI(endpoint, options = {}) {
                 throw new Error(errorData.detail || "아이디 또는 비밀번호가 올바르지 않습니다.");
             }
             
-            if (endpoint.includes('/users/me') || endpoint.includes('/logout')) {
+            if (endpoint.includes('/users/me') || endpoint.includes('/logout') || endpoint.includes('/menus')) {
                 return null; // 에러를 발생시키지 않고 빈 값을 돌려줍니다.
             }
             

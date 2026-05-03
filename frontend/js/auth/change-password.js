@@ -1,6 +1,7 @@
 // frontend/js/auth/change-password.js
-import { fetchAPI } from '../api.js';
-import { CONFIG } from '../config.js';
+import { navigateTo } from "/js/router.js";
+import { fetchAPI } from '/js/api.js';
+import { CONFIG } from '/js/config.js';
 
 document.getElementById('change-pw-btn').addEventListener('click', async () => {
     const currentPassword = document.getElementById('current_password').value;
@@ -35,7 +36,7 @@ document.getElementById('change-pw-btn').addEventListener('click', async () => {
         alert("비밀번호가 변경되었습니다! 보안을 위해 다시 로그인해주세요.");
         
         // 로그아웃 API가 있다면 호출하고, 아니면 메인으로 이동
-        window.location.href = CONFIG.PAGE_URL.LOGIN;
+        navigateTo(CONFIG.PAGE_URL.LOGIN); 
 
     } catch (error) {
         console.error("비밀번호 변경 에러:", error);

@@ -22,7 +22,9 @@ export async function updateAuthUI() {
     if (user) {
         // 로그인 상태 UI[cite: 2]
         authMenu.innerHTML = `
-            <span class="user-name">Welcome, <strong>${user.user_id}</strong>님</span>
+            <a href="/mypage" class="user-link" data-link>
+                <strong>${user.user_id}</strong>님
+            </a>
             <button id="logout-btn" class="logout-btn">로그아웃</button>
         `;
 
