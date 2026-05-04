@@ -6,28 +6,28 @@ junq/
 .junq/
 
 # 데이터베이스 (개인 데이터가 들어있으므로 올리지 않음)
-*.db
-*.sqlite3
+backend/*.db
+backend/*.sqlite3
 
 # 가상환경
-venv/
-.venv/
+backend/venv/
+backend/.venv/
 
 # 기타 설정 파일
 .vscode/
 .idea/
 
 # Environments
-.env
-.venv
-env/
-venv/
-ENV/
+backend/.env
+backend/.venv
+backend/env/
+backend/venv/
+backend/ENV/
 
 # Alembic
 backend/alembic/__pycache__/
 
 # Frontend (Live Server 및 OS 관련)
-.vscode/
-.DS_Store
-Thumbs.db
+frontend/.vscode/
+frontend/.DS_Store
+frontend/Thumbs.db
