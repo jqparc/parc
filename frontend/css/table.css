@@ -1,11 +1,38 @@
 /* frontend/css/style.css */
 
 .table-container {
-    flex: 1;
     background-color: #652c2c;
-    width: 100%;
+    padding: 1%;
 }
-
+/* 공통테이블 레이아웃 */
+.common-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    font-size: 15px;
+}
+.common-table th {
+    background-color: #04106c;
+    font-weight: 500;
+    color: #a6a6a6;
+}
+.common-table tr {
+    background-color: #f0f0f0;
+    font-weight: 500;
+    font-weight: bold;
+    color:  #000000;
+}
+/* .common-table td {
+    font-size: 12px;
+    font-weight: bold;
+    color: #262626;
+} */
+.common-table small {
+    display: block;
+    font-size: 12px;
+    color: #95a5a6;
+}
+/* 공통테이블 레이아웃 종료 */
 .infos-table {
     width: 100%;
     /* border-collapse: collapse;  */

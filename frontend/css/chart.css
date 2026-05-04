@@ -1,0 +1,33 @@
+/* 차트들이 나열될 그리드 영역 */
+#chart-container {
+    /* padding: 1%; */
+    background-color: rgb(255, 255, 255);
+    /* display: grid; */
+    /* gap: 20px; */
+    /* padding: 20px; */
+    /* width: 100%; */
+}
+
+/* 개별 차트 감싸는 박스 - 이 높이가 차트의 높이가 됩니다 */
+.chart-item {
+    /* position: relative;  */
+    height: 150px;     
+    /* width: 100%; */
+    background: #ffffff;
+    /* border: 1px solid #ddd; */
+    /* border-radius: 8px; */
+    /* padding: 1%; */
+    /* box-shadow: 0 2px 5px rgba(0,0,0,0.05); */
+}
+
+.chart-item h3 {
+    margin: 0;
+    font-size: 0.5rem;
+    text-align: center;
+}
+
+/* 캔버스가 부모 박스를 절대 넘지 못하게 강제 */
+.chart-item canvas {
+    width: 100% !important;
+    height: calc(100% - 50px) !important; /* 제목 영역 제외한 나머지 */
+}

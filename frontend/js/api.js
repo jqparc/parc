@@ -1,5 +1,6 @@
 // frontend/js/api.js
 import { CONFIG } from '/js/config.js';
+import { navigateTo } from '/js/router.js';
 
 export async function fetchAPI(endpoint, options = {}) {
     const url = `${CONFIG.BASE_URL}${endpoint}`;
@@ -31,7 +32,7 @@ export async function fetchAPI(endpoint, options = {}) {
             
             // 로그인 이외의 통신에서 401이 나면 진짜 세션 만료!
             alert("세션이 만료되었습니다. 다시 로그인해 주세요.");
-            window.location.href = '/pages/auth/login.html';
+            navigateTo('/login');
             return null; 
         }
 

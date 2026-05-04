@@ -47,7 +47,8 @@ const routes = {
     },
     "/economy/indicators": {
         html: "/pages/economy/indicators.html",
-        js: null
+        // initFunction: initEconomyIndicators,
+        js: "/js/boards/economy-indicators.js" 
     },
     "/asset": {
         html: "/pages/asset/portfolio.html",
