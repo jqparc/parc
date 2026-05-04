@@ -1,17 +1,16 @@
-# backend/core/config.py
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
-    # JWT Auth 관련 설정
-    SECRET_KEY: str = "fallback_secret_key_for_development_only"
-    ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    SECRET_KEY: str 
+    ALGORITHM: str 
+    DATABASE_URL: str 
     
-    # DB 관련 설정
-    DATABASE_URL: str = "sqlite:///./parc.db"
-    
-    class Config:
-        env_file = ".env"
+    # 새로 추가된 속성
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
+    FRONTEND_URL: str 
+    COOKIE_SECURE: bool
+    COOKIE_SAMESITE: str
 
-# settings 인스턴스를 생성해 다른 파일에서 재사용합니다.
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+
 settings = Settings()

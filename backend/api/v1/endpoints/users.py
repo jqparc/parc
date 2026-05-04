@@ -6,6 +6,7 @@ from models.user_model import User # 모델 추가
 from api.v1.dependencies.service_deps import get_user_service 
 from api.v1.dependencies.auth_deps import get_current_user
 
+
 router = APIRouter()
 
 @router.post("/signup", status_code=status.HTTP_201_CREATED)

@@ -3,7 +3,7 @@ from jose import jwt, JWTError
 from sqlalchemy.orm import Session
 
 from db.database import get_db
-from core.security import SECRET_KEY, ALGORITHM
+from core.config import settings
 from repositories.user_repository import UserRepository
 from models.user_model import User
 
@@ -27,9 +27,10 @@ def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
         )
 
     try:
-        # 2. 토큰 해독 및 유저 ID 추출
-        token = token.replace("Bearer ", "")
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        if token.startswith("Bearer "):
+            token = token.replace("Bearer ", "")
+
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         
         # 🔥 기존 버그 수정: username이 아니라 우리 모델에 맞는 user_id를 사용합니다.
         user_id: str = payload.get("sub") 

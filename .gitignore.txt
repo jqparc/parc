@@ -23,3 +23,11 @@ venv/
 env/
 venv/
 ENV/
+
+# Alembic
+backend/alembic/__pycache__/
+
+# Frontend (Live Server 및 OS 관련)
+.vscode/
+.DS_Store
+Thumbs.db

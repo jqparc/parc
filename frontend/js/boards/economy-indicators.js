@@ -74,7 +74,7 @@ function renderSummaryTable(container, summaries) {
     let html = `
         <table class="common-table">
             <thead>
-                <tr">
+                <tr>
                     <th>지표명</th>
                     <th>현재가</th>
                     <th>전일가</th>
@@ -85,7 +85,12 @@ function renderSummaryTable(container, summaries) {
     `;
 
     summaries.forEach(item => {
-        // 등락 양수/음수 판별을 통한 색상 및 기호 분기
+        // 데이터 안전성 확보: null 또는 undefined일 경우 0이나 '-'로 대체
+        const currentVal = item.current_value !== null ? item.current_value.toLocaleString() : "-";
+        const prevVal = item.previous_value !== null ? item.previous_value.toLocaleString() : "-";
+        const changeVal = item.change !== null ? Math.abs(item.change).toLocaleString() : "0";
+        const changeRate = item.change_rate !== null ? item.change_rate.toFixed(2) : "0.00";
+
         const isPositive = item.change > 0;
         const isNegative = item.change < 0;
         const colorClass = isPositive ? 'color: #e74c3c;' : (isNegative ? 'color: #2980b9;' : 'color: #7f8c8d;');
@@ -94,20 +99,20 @@ function renderSummaryTable(container, summaries) {
         html += `
                 <tr style="border-bottom: 1px solid #eee;">
                     <td style="text-align: left;">
-                        ${item.name} 
-                        <small style="text-align: right">${item.symbol} / (${item.unit})</small>
+                        ${item.name || '알 수 없는 지표'} 
+                        <small style="text-align: right">${item.symbol || ''} / (${item.unit || ''})</small>
                     </td>
                     <td>
-                        ${item.current_value.toLocaleString()}
-                        <small>${item.current_date}</small>
+                        ${currentVal}
+                        <small>${item.current_date || ''}</small>
                     </td>
                     <td style="color: #50969b;">
-                        ${item.previous_value.toLocaleString()}
-                        <small>${item.previous_date}</small>
+                        ${prevVal}
+                        <small>${item.previous_date || ''}</small>
                     </td>
                     <td style="${colorClass}">
-                        ${sign} ${Math.abs(item.change).toLocaleString()}
-                        <small style="color: #95a5a6; display: block; font-weight: normal; ${colorClass}">(${Math.abs(item.change_rate).toFixed(2)}%)</small>
+                        ${sign} ${changeVal}
+                        <small style="color: #95a5a6; display: block; font-weight: normal; ${colorClass}">(${changeRate}%)</small>
                     </td>
                 </tr>
         `;
