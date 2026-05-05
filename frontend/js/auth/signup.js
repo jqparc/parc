@@ -1,108 +1,200 @@
-// frontend/js/auth/signup.js
 import { navigateTo } from "/js/router.js";
 import { fetchAPI } from '/js/api.js';
 import { CONFIG } from '/js/config.js';
 
-// 💡 실시간 비밀번호 일치 확인 로직
-const passwordEl = document.getElementById('password');
-const confirmPasswordEl = document.getElementById('confirm_password');
-const passwordMsg = document.getElementById('password_msg');
+const availabilityState = {
+    user_id: { value: '', available: false },
+    nickname: { value: '', available: false }
+};
+
+function debounce(callback, delay = 450) {
+    let timerId = null;
+    return (...args) => {
+        clearTimeout(timerId);
+        timerId = setTimeout(() => callback(...args), delay);
+    };
+}
+
+function setFieldMessage(element, message, isOk = false) {
+    if (!element) return;
+    element.textContent = message;
+    element.hidden = !message;
+    element.style.color = isOk ? 'green' : 'red';
+}
 
 function checkPasswordMatch() {
+    const passwordEl = document.getElementById('password');
+    const confirmPasswordEl = document.getElementById('confirm_password');
+    const passwordMsg = document.getElementById('password_msg');
+
+    if (!passwordEl || !confirmPasswordEl || !passwordMsg) return;
+
     if (confirmPasswordEl.value === '') {
-        passwordMsg.style.display = 'none';
+        setFieldMessage(passwordMsg, '');
         return;
     }
-    
-    passwordMsg.style.display = 'block';
+
     if (passwordEl.value !== confirmPasswordEl.value) {
-        passwordMsg.textContent = '비밀번호가 일치하지 않습니다.';
-        passwordMsg.style.color = 'red';
-    } else {
-        passwordMsg.textContent = '비밀번호가 일치합니다.';
-        passwordMsg.style.color = 'green';
+        setFieldMessage(passwordMsg, '비밀번호가 일치하지 않습니다.');
+        return;
+    }
+
+    setFieldMessage(passwordMsg, '비밀번호가 일치합니다.', true);
+}
+
+async function checkAvailability(field, value) {
+    const trimmedValue = value.trim();
+    const msgEl = document.getElementById(`${field}_msg`);
+    const minLength = field === 'user_id' ? 4 : 2;
+    const label = field === 'user_id' ? '아이디' : '닉네임';
+
+    availabilityState[field] = { value: trimmedValue, available: false };
+
+    if (!trimmedValue) {
+        setFieldMessage(msgEl, '');
+        return false;
+    }
+
+    if (trimmedValue.length < minLength || trimmedValue.length > 20) {
+        setFieldMessage(msgEl, `${label}는 ${minLength}~20자로 입력해 주세요.`);
+        return false;
+    }
+
+    setFieldMessage(msgEl, '중복 확인 중...', true);
+
+    try {
+        const data = await fetchAPI(`/users/availability?${field}=${encodeURIComponent(trimmedValue)}`);
+        const result = data?.[field];
+
+        if (result?.value !== trimmedValue) {
+            return false;
+        }
+
+        availabilityState[field] = {
+            value: trimmedValue,
+            available: Boolean(result.available)
+        };
+
+        if (result.available) {
+            setFieldMessage(msgEl, `사용 가능한 ${label}입니다.`, true);
+            return true;
+        }
+
+        setFieldMessage(msgEl, `이미 사용 중인 ${label}입니다.`);
+        return false;
+    } catch (error) {
+        setFieldMessage(msgEl, `${label} 중복 확인에 실패했습니다.`);
+        return false;
     }
 }
 
-// 비밀번호나 확인란에 타이핑할 때마다 일치 여부 검사
-passwordEl.addEventListener('input', checkPasswordMatch);
-confirmPasswordEl.addEventListener('input', checkPasswordMatch);
+async function validateAvailabilityBeforeSubmit(userId, nickname) {
+    const checks = [];
 
+    if (availabilityState.user_id.value !== userId || !availabilityState.user_id.available) {
+        checks.push(checkAvailability('user_id', userId));
+    }
 
-// 💡 가입 버튼 클릭 이벤트
-document.getElementById('signup-btn').addEventListener('click', async () => {
+    if (availabilityState.nickname.value !== nickname || !availabilityState.nickname.available) {
+        checks.push(checkAvailability('nickname', nickname));
+    }
+
+    if (checks.length > 0) {
+        await Promise.all(checks);
+    }
+
+    return (
+        availabilityState.user_id.value === userId &&
+        availabilityState.user_id.available &&
+        availabilityState.nickname.value === nickname &&
+        availabilityState.nickname.available
+    );
+}
+
+async function handleSignup() {
     const userIdInput = document.getElementById('user_id').value.trim();
-    const passwordInput = passwordEl.value;
-    const confirmPasswordInput = confirmPasswordEl.value;
+    const passwordInput = document.getElementById('password').value;
+    const confirmPasswordInput = document.getElementById('confirm_password').value;
     const nicknameInput = document.getElementById('nickname').value.trim();
     const phoneInput = document.getElementById('phone').value.trim();
+    const signupBtn = document.getElementById('signup-btn');
 
-    // 1. 프론트엔드 유효성 검사 (백엔드 schema와 동기화)
     if (userIdInput.length < 4 || userIdInput.length > 20) {
-        alert("아이디는 4자 이상, 20자 이하로 입력해주세요!");
+        alert("아이디는 4자 이상, 20자 이하로 입력해 주세요.");
         return;
     }
 
     if (passwordInput.length < 8) {
-        alert("비밀번호는 8자 이상 입력해주세요!");
-        return; 
+        alert("비밀번호는 8자 이상 입력해 주세요.");
+        return;
     }
 
-    // 비밀번호 정규식 검사 (영문, 숫자 포함 여부)
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).+$/;
-    if (!passwordRegex.test(passwordInput)) {
-        alert("비밀번호는 영문자와 숫자를 모두 포함해야 합니다!");
+    if (!/^(?=.*[A-Za-z])(?=.*\d).+$/.test(passwordInput)) {
+        alert("비밀번호는 영문자와 숫자를 모두 포함해야 합니다.");
         return;
     }
 
     if (passwordInput !== confirmPasswordInput) {
-        alert("비밀번호가 일치하지 않습니다. 다시 확인해주세요.");
+        alert("비밀번호가 일치하지 않습니다.");
         return;
     }
 
     if (nicknameInput.length < 2 || nicknameInput.length > 20) {
-        alert("닉네임은 2자 이상, 20자 이하로 입력해주세요!");
-        return; 
+        alert("닉네임은 2자 이상, 20자 이하로 입력해 주세요.");
+        return;
     }
 
-    if (phoneInput.length === 0) {
-        alert("전화번호를 입력해주세요!");
-        return; 
+    if (!phoneInput) {
+        alert("전화번호를 입력해 주세요.");
+        return;
     }
 
-    // 2. 백엔드 스키마(UserCreate) 구조에 맞게 데이터 포장
-    const userData = {
-        user_id: userIdInput,
-        password: passwordInput,
-        nickname: nicknameInput,
-        phone: phoneInput
-    };
+    const isAvailable = await validateAvailabilityBeforeSubmit(userIdInput, nicknameInput);
+    if (!isAvailable) {
+        alert("아이디와 닉네임 중복 여부를 확인해 주세요.");
+        return;
+    }
 
     try {
-        // 회원가입 버튼 비활성화 (중복 클릭 방지)
-        const signupBtn = document.getElementById('signup-btn');
         signupBtn.disabled = true;
         signupBtn.textContent = '가입 처리 중...';
 
-        const result = await fetchAPI('/users/signup', {
-            method: 'POST', 
-            body: JSON.stringify(userData) 
+        await fetchAPI('/users/signup', {
+            method: 'POST',
+            body: JSON.stringify({
+                user_id: userIdInput,
+                password: passwordInput,
+                nickname: nicknameInput,
+                phone: phoneInput
+            })
         });
 
-        // fetchAPI는 실패하면 throw Error를 던지므로, 여기까지 코드가 내려왔다면 무조건 성공입니다.
-        alert("회원가입이 완료되었습니다! 로그인 해주세요.");
-        
-        // 가입 성공 후 config.js에 정의된 로그인 페이지로 이동
+        alert("회원가입이 완료되었습니다. 로그인해 주세요.");
         navigateTo(CONFIG.PAGE_URL.LOGIN);
-
     } catch (error) {
-        // api.js에서 던진 에러 메시지(error.message)를 띄워줍니다. (예: 이미 존재하는 아이디입니다 등)
-        console.error("회원가입 에러:", error);
         alert("가입 실패: " + error.message);
-    }finally {
-        // 실패하더라도 버튼 다시 활성화
-        const signupBtn = document.getElementById('signup-btn');
+    } finally {
         signupBtn.disabled = false;
         signupBtn.textContent = '가입하기';
     }
-});
+}
+
+export function init() {
+    const userIdEl = document.getElementById('user_id');
+    const nicknameEl = document.getElementById('nickname');
+    const passwordEl = document.getElementById('password');
+    const confirmPasswordEl = document.getElementById('confirm_password');
+    const signupBtn = document.getElementById('signup-btn');
+
+    userIdEl?.addEventListener('input', debounce(() => {
+        checkAvailability('user_id', userIdEl.value);
+    }));
+
+    nicknameEl?.addEventListener('input', debounce(() => {
+        checkAvailability('nickname', nicknameEl.value);
+    }));
+
+    passwordEl?.addEventListener('input', checkPasswordMatch);
+    confirmPasswordEl?.addEventListener('input', checkPasswordMatch);
+    signupBtn?.addEventListener('click', handleSignup);
+}

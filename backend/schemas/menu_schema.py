@@ -4,6 +4,20 @@ from typing import Optional
 from datetime import datetime
 import re
 
+class MenuCreate(BaseModel):
+    menu_id: str = Field(..., description="menu_id")
+    menu_name: str = Field(..., description="menu_name")
+    href: str = Field(..., description="href")
+    role: str = Field(default="ALL", description="role")
+    use_yn: str = Field(default="Y", description="use_yn")
+    seq: int = Field(..., description="seq")
+
+
+class MenuUpdate(BaseModel):
+    use_yn: Optional[str] = Field(None, description="use_yn")
+    seq: Optional[int] = Field(None, description="seq")
+
+
 class MenuBase(BaseModel):
     # Field를 사용하여 최소/최대 길이 지정 (DB 에러 방지 및 보안)
     id: str = Field(..., description="id")

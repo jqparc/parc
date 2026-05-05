@@ -1,10 +1,9 @@
-// frontend/js/load_layout.js
-// 절대경로로 바로 지정
-import { renderNavigation } from '/js/components/navigation.js'; 
-
 const GLOBAL_STYLES = [
-    '/css/style.css', 
-    '/css/table.css'
+    '/css/style.css',
+    '/css/table.css',
+    '/css/menu-admin.css',
+    '/css/auth-pages.css',
+    '/css/asset-stck.css'
 ];
 
 function injectGlobalStyles() {
@@ -24,7 +23,7 @@ export async function loadComponent(targetId, htmlPath, cssPath = null, jsPath =
         if (!targetElement) return;
 
         const response = await fetch(htmlPath);
-        if (!response.ok) throw new Error(`${htmlPath} 로드 실패: ${response.status}`);
+        if (!response.ok) throw new Error(`${htmlPath} load failed: ${response.status}`);
         const html = await response.text();
         targetElement.innerHTML = html;
 
@@ -36,34 +35,28 @@ export async function loadComponent(targetId, htmlPath, cssPath = null, jsPath =
         }
 
         if (jsPath) {
-            await import(jsPath); 
+            await import(jsPath);
         }
     } catch (error) {
-        console.error(`[LoadComponent 에러]:`, error);
+        console.error('[LoadComponent Error]:', error);
     }
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
     injectGlobalStyles();
 
-    // 헬퍼 함수 없이 무조건 절대경로 사용
     await loadComponent(
-        'header-container', 
-        '/components/header.html', 
-        null, 
+        'header-container',
+        '/components/header.html',
+        null,
         '/js/auth/check_auth.js'
     );
-    
+
     await loadComponent(
-        'nav-container', 
+        'nav-container',
         '/components/navigation.html',
-        null 
+        null
     );
 
-    if (typeof renderNavigation === 'function') {
-        renderNavigation();
-    }
-
-    // 레이아웃 로드 완료 이벤트를 발생시켜 router.js가 이후 작업을 하도록 함
     document.dispatchEvent(new Event("layoutLoaded"));
 });

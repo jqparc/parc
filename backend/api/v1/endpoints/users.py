@@ -1,5 +1,12 @@
 from fastapi import APIRouter, Depends, status, Response
-from schemas.user_schema import UserCreate, UserResponse, UserLogin, UserUpdate, PasswordChange
+from schemas.user_schema import (
+    PasswordChange,
+    PasswordVerify,
+    UserCreate,
+    UserLogin,
+    UserResponse,
+    UserUpdate,
+)
 from services.user_service import UserService
 from models.user_model import User # 모델 추가
 # 🔥 의존성을 전용 폴더에서 가져옵니다.
@@ -15,6 +22,15 @@ def signup(
     service: UserService = Depends(get_user_service) # 깔끔하게 주입 완료!
 ):
     return service.register_user(user_data)
+
+
+@router.get("/availability")
+def check_user_availability(
+    user_id: str | None = None,
+    nickname: str | None = None,
+    service: UserService = Depends(get_user_service),
+):
+    return service.check_availability(user_id=user_id, nickname=nickname)
 
 @router.get("/me", response_model=UserResponse)
 def read_user_me(current_user: User = Depends(get_current_user)):
@@ -68,3 +84,12 @@ def change_my_password(
     service: UserService = Depends(get_user_service)
 ):
     return service.change_password(current_user, pw_data)
+
+
+@router.post("/me/password/verify")
+def verify_my_password_for_change(
+    verify_data: PasswordVerify,
+    current_user: User = Depends(get_current_user),
+    service: UserService = Depends(get_user_service),
+):
+    return service.verify_password_for_change(current_user, verify_data)

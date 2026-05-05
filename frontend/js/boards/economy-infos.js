@@ -1,42 +1,62 @@
-// frontend/js/economy_infos.js (또는 해당 페이지의 스크립트)
+import { fetchAPI } from '/js/api.js';
+import { navigateTo } from '/js/router.js';
+import { checkAuthStatus } from '/js/auth/check_auth.js';
 
-let currentPage = 1;
-const pageSize = 10; // 한 페이지에 보여줄 글 수
+const BOARD_CODE = 'economy-info';
+const PAGE_SIZE = 10;
 
 async function loadEconomyPosts(page = 1) {
-    const boardSlug = "economy-info";
     try {
-        const response = await fetch(`/api/boards/${boardSlug}/posts?page=${page}&size=${pageSize}`);
-        const data = await response.json();
-
-        // data.total_count가 백엔드에서 넘어온다고 가정 (전체 글 개수)
-        renderTable(data.posts, page, data.total_count); 
-        renderPagination(data.total_pages, data.current_page);
+        const data = await fetchAPI(`/boards/${BOARD_CODE}/posts?page=${page}&size=${PAGE_SIZE}`);
+        renderTable(data.posts || [], data.current_page || page, data.total_count || 0);
+        renderPagination(data.total_pages || 0, data.current_page || page);
     } catch (error) {
-        console.error("데이터를 불러오는데 실패했습니다.", error);
+        const tbody = document.getElementById('economy-list');
+        if (tbody) {
+            tbody.innerHTML = '<tr><td colspan="3" class="empty-cell">게시글을 불러오지 못했습니다.</td></tr>';
+        }
+        console.error('Failed to load posts:', error);
     }
+}
+
+async function setupWriteButton() {
+    const writeButton = document.querySelector('.write-btn');
+    if (!writeButton) return;
+
+    writeButton.hidden = true;
+    writeButton.style.display = 'none';
+
+    const user = await checkAuthStatus();
+    if (user?.role !== 'ADMIN') {
+        return;
+    }
+
+    writeButton.hidden = false;
+    writeButton.style.display = '';
+    writeButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        navigateTo(writeButton.getAttribute('href'));
+    });
 }
 
 function renderTable(posts, page, totalCount) {
     const tbody = document.getElementById('economy-list');
-    
-    // 데이터가 없을 경우 처리
+    if (!tbody) return;
+
     if (posts.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="3" style="padding:50px 0;">등록된 정보가 없습니다.</td></tr>`;
+        tbody.innerHTML = '<tr><td colspan="3" class="empty-cell">등록된 게시글이 없습니다.</td></tr>';
         return;
     }
 
     tbody.innerHTML = posts.map((post, index) => {
-        // 역순 번호 계산: 전체 개수 - ((현재페이지 - 1) * 페이지크기) - 현재 인덱스
-        // 예: 전체 35개, 1페이지면 35, 34, 33... / 2페이지면 25, 24, 23...
-        const displayNum = totalCount - ((page - 1) * pageSize) - index;
-        const dateStr = post.created_at.split('T')[0]; // "YYYY-MM-DD" 포맷팅
+        const displayNum = totalCount - ((page - 1) * PAGE_SIZE) - index;
+        const dateStr = post.created_at ? post.created_at.split('T')[0] : '';
 
         return `
             <tr>
                 <td>${displayNum}</td>
                 <td class="td-title">
-                    <a href="/economy/detail/${post.id}">${post.title}</a>
+                    <a href="/economy/infos/${post.id}" data-link>${post.title}</a>
                 </td>
                 <td>${dateStr}</td>
             </tr>
@@ -44,22 +64,32 @@ function renderTable(posts, page, totalCount) {
     }).join('');
 }
 
-function renderPagination(totalPages, current) {
+function renderPagination(totalPages, currentPage) {
     const container = document.getElementById('pagination-container');
-    let html = '';
+    if (!container) return;
 
-    for (let i = 1; i <= totalPages; i++) {
-        html += `
-            <button class="page-btn ${i === current ? 'active' : ''}" 
-                    onclick="loadEconomyPosts(${i})">
-                ${i}
+    if (totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+    }
+
+    container.innerHTML = Array.from({ length: totalPages }, (_, index) => {
+        const page = index + 1;
+        return `
+            <button type="button" class="page-btn ${page === currentPage ? 'active' : ''}" data-page="${page}">
+                ${page}
             </button>
         `;
-    }
-    container.innerHTML = html;
+    }).join('');
+
+    container.querySelectorAll('button[data-page]').forEach((button) => {
+        button.addEventListener('click', () => {
+            loadEconomyPosts(Number(button.dataset.page));
+        });
+    });
 }
 
-// 페이지 열릴 때 1페이지 로드
-document.addEventListener('DOMContentLoaded', () => {
+export function init() {
+    setupWriteButton();
     loadEconomyPosts(1);
-});
+}

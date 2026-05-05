@@ -1,69 +1,137 @@
 # backend/routers/posts.py
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
-from db.database import get_db
 from api.v1.dependencies.auth_deps import get_current_user
-from models.user_model import User
+from db.database import get_db
 from models.board_model import Board
-from models.post_model import Post
-from schemas.post_schema import PostCreate, PostResponse
+from models.user_model import User, UserRole
+from schemas.post_schema import (
+    BoardResponse,
+    PostCreate,
+    PostListResponse,
+    PostResponse,
+    PostUpdate,
+)
 from services import post_service
 
 router = APIRouter(tags=["Posts"])
 
-@router.post("/api/boards/{board_slug}/posts", response_model=PostResponse)
-def create_post(
-    board_slug: str, # URL에서 'free', 'notice' 등을 받아옴
-    post_data: PostCreate, # 프론트엔드에서 보낸 제목, 내용
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user) # ⭐️ 로그인한 사람만 이 API를 실행할 수 있음!
-):
-    # 1. 주소표시줄의 slug 값이 실제 존재하는 게시판인지 확인
-    board = db.query(Board).filter(Board.slug == board_slug).first()
-    if not board:
-        raise HTTPException(status_code=404, detail="존재하지 않는 게시판입니다.")
 
-    # 2. 서비스 로직을 호출하여 글 저장 (게시판 ID와 현재 로그인한 유저의 ID를 넘겨줌)
-    new_post = post_service.create_new_post(
+def get_board_by_code(db: Session, board_code: str) -> Board:
+    board = (
+        db.query(Board)
+        .filter(Board.code == board_code, Board.is_active.is_(True))
+        .first()
+    )
+    if not board:
+        raise HTTPException(status_code=404, detail="Board not found.")
+
+    return board
+
+
+def check_post_owner_or_admin(post_author_id: int, current_user: User) -> None:
+    if current_user.id == post_author_id or current_user.role == UserRole.ADMIN:
+        return
+
+    raise HTTPException(status_code=403, detail="You do not have permission for this post.")
+
+
+def check_admin(current_user: User) -> None:
+    if current_user.role == UserRole.ADMIN:
+        return
+
+    raise HTTPException(status_code=403, detail="Admin permission required.")
+
+
+@router.get("/boards", response_model=list[BoardResponse])
+def get_boards(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    check_admin(current_user)
+    return (
+        db.query(Board)
+        .filter(Board.is_active.is_(True))
+        .order_by(Board.id)
+        .all()
+    )
+
+
+@router.post("/boards/{board_code}/posts", response_model=PostResponse)
+def create_post(
+    board_code: str,
+    post_data: PostCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    check_admin(current_user)
+    board = get_board_by_code(db, board_code)
+    if post_data.board_id is not None and post_data.board_id != board.id:
+        raise HTTPException(status_code=400, detail="Selected board_id does not match board code.")
+
+    return post_service.create_new_post(
         db=db,
         post_data=post_data,
         board_id=board.id,
-        user_id=current_user.id # 쿠키에서 안전하게 빼낸 내 ID
+        user_id=current_user.id,
     )
-    
-    return new_post
 
-@router.get("/api/boards/{board_slug}/posts")
+
+@router.get("/boards/{board_code}/posts", response_model=PostListResponse)
 def get_posts(
-    board_slug: str,
-    page: int = Query(1, ge=1, description="페이지 번호"),  # 기본값 1, 1 이상이어야 함
-    size: int = Query(10, ge=1, le=50, description="한 페이지당 글 개수"), # 기본 10개, 최대 50개 제한
-    db: Session = Depends(get_db)
+    board_code: str,
+    page: int = Query(1, ge=1, description="Page number"),
+    size: int = Query(10, ge=1, le=50, description="Posts per page"),
+    db: Session = Depends(get_db),
 ):
-    # 1. 주소표시줄의 slug 값이 실제 존재하는 게시판인지 확인
-    board = db.query(Board).filter(Board.slug == board_slug).first()
-    if not board:
-        raise HTTPException(status_code=404, detail="존재하지 않는 게시판입니다.")
+    board = get_board_by_code(db, board_code)
+    return post_service.get_posts_by_board(db, board.id, page, size)
 
-    # 2. 해당 게시판에 있는 전체 글 개수 조회 (번호 역순 계산을 위해 필수!)
-    total_count = db.query(Post).filter(Post.board_id == board.id).count()
 
-    # 3. 페이지네이션 (건너뛸 개수 계산)
-    skip = (page - 1) * size
-    
-    # 4. 최신순(created_at.desc())으로 정렬한 뒤, 필요한 만큼만(limit) 잘라서 가져오기
-    posts = db.query(Post).filter(Post.board_id == board.id)\
-              .order_by(Post.created_at.desc())\
-              .offset(skip).limit(size).all()
+@router.get("/boards/{board_code}/posts/{post_id}", response_model=PostResponse)
+def get_post(
+    board_code: str,
+    post_id: int,
+    db: Session = Depends(get_db),
+):
+    board = get_board_by_code(db, board_code)
+    post = post_service.get_post_detail_by_board(db, post_id, board.id)
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found.")
 
-    # 전체 페이지 수 계산 (올림 처리)
-    total_pages = (total_count + size - 1) // size
+    return post
 
-    # 프론트엔드가 요구하는 데이터 형식으로 리턴
-    return {
-        "posts": posts,
-        "total_pages": total_pages,
-        "current_page": page,
-        "total_count": total_count  # 역순 번호 매기기를 위해 프론트로 전달!
-    }
+
+@router.patch("/boards/{board_code}/posts/{post_id}", response_model=PostResponse)
+def update_post(
+    board_code: str,
+    post_id: int,
+    post_data: PostUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    board = get_board_by_code(db, board_code)
+    post = post_service.get_post_detail_by_board(db, post_id, board.id)
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found.")
+
+    check_post_owner_or_admin(post.author_id, current_user)
+    return post_service.update_existing_post(db, post.id, post_data)
+
+
+@router.delete("/boards/{board_code}/posts/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_post(
+    board_code: str,
+    post_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    board = get_board_by_code(db, board_code)
+    post = post_service.get_post_detail_by_board(db, post_id, board.id)
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found.")
+
+    check_post_owner_or_admin(post.author_id, current_user)
+    post_service.delete_existing_post(db, post.id)
+    return None

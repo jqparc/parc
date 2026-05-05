@@ -22,17 +22,17 @@ class User(Base):
 
     # 표의 칸(Column)들을 정의합니다.
     id = Column(Integer, primary_key=True, index=True)      
-    user_id = Column(String, unique=True, index=True)      
+    user_id = Column(String, unique=True, index=True, nullable=False)
     password = Column(String, nullable=True)                           
 
     nickname = Column(String, unique=True, nullable=False)
     phone = Column(String, unique=True, nullable=False)
 
-    provider = Column(String, default="LOCAL") # 'local', 'kakao', 'google' 등
+    provider = Column(String, default="LOCAL", nullable=False) # 'local', 'kakao', 'google' 등
     social_id = Column(String, unique=True, index=True, nullable=True)
 
-    role = Column(Enum(UserRole), default=UserRole.ALL, nullable=False)
+    role = Column(Enum(UserRole), default=UserRole.USER, nullable=False)
     status = Column(Enum(UserStatus), default=UserStatus.ACTIVE, nullable=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     posts = relationship("Post", back_populates="author")

@@ -1,0 +1,46 @@
+<section class="post-write-page">
+    <div class="post-write-header">
+        <div>
+            <p class="post-write-kicker" id="post-edit-board">Board</p>
+            <h2>글 수정</h2>
+        </div>
+        <a href="/economy/infos" class="post-write-cancel" id="post-edit-back" data-link>상세</a>
+    </div>
+
+    <form id="post-edit-form" class="post-write-form">
+        <div class="post-write-field">
+            <label for="post-edit-title">제목</label>
+            <input
+                type="text"
+                id="post-edit-title"
+                name="title"
+                maxlength="200"
+                placeholder="제목을 입력하세요"
+                required
+            >
+        </div>
+
+        <div class="post-write-field">
+            <label for="post-edit-content">내용</label>
+            <textarea
+                id="post-edit-content"
+                name="content"
+                rows="14"
+                placeholder="내용을 입력하세요"
+                required
+            ></textarea>
+        </div>
+
+        <label class="post-write-check">
+            <input type="checkbox" id="post-edit-is-notice" name="is_notice">
+            <span>공지글로 등록</span>
+        </label>
+
+        <p id="post-edit-error" class="post-write-error" hidden></p>
+
+        <div class="post-write-actions">
+            <button type="button" class="post-write-secondary" id="post-edit-cancel">취소</button>
+            <button type="submit" class="post-write-primary" id="post-edit-submit">저장</button>
+        </div>
+    </form>
+</section>

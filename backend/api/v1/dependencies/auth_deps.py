@@ -7,6 +7,33 @@ from core.config import settings
 from repositories.user_repository import UserRepository
 from models.user_model import User
 
+
+def get_optional_current_user(request: Request, db: Session = Depends(get_db)) -> User | None:
+    token = request.cookies.get("access_token")
+
+    if not token and "Authorization" in request.headers:
+        auth_header = request.headers["Authorization"]
+        if auth_header.startswith("Bearer "):
+            token = auth_header.replace("Bearer ", "")
+
+    if not token:
+        return None
+
+    try:
+        if token.startswith("Bearer "):
+            token = token.replace("Bearer ", "")
+
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        user_id: str = payload.get("sub")
+        if user_id is None:
+            return None
+    except JWTError:
+        return None
+
+    user_repo = UserRepository(db)
+    return user_repo.get_by_user_id(user_id=user_id)
+
+
 def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
     """
     요청(Request)의 쿠키 또는 헤더에서 토큰을 추출하여 현재 로그인한 유저 객체를 반환합니다.

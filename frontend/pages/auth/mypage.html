@@ -1,25 +1,25 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>Parc</title>
-    <link rel="stylesheet" href="/css/style.css">
-</head>
-<body>
-    <div id="header-placeholder"></div>
-        
-    <div id="nav-placeholder"></div>
-    <main class="main-container">
-        <h2>내 정보 관리</h2>
-        <a href="/profile" class="aa" data-link>개인정보수정</a>
-        <a href="/change-password" class="aa" data-link>비밀번호변경</a>
-        <a href="/menu" class="aa" data-link>메뉴/탭 관리</a>
-        <a href="#" class="aa">고객센터</a>
-    </main>
+<main class="main-container mypage-container">
+    <h2>내 정보 관리</h2>
+    <a href="/profile" class="aa" data-link>개인정보수정</a>
+    <a href="/change-password" class="aa" id="change-password-link">비밀번호 변경</a>
+    <a href="/menu" class="aa" data-link>메뉴/탭 관리</a>
+    <a href="#" class="aa">고객센터</a>
 
-    <div id="footer-placeholder"></div>
-
-    <script type="module" src="/js/auth/signup.js"></script>
-    <script type="module" src="/js/load_layout.js"></script>
-</body>
-</html>
+    <div class="password-modal-backdrop" id="password-verify-modal" hidden>
+        <div class="password-modal" role="dialog" aria-modal="true" aria-labelledby="password-verify-title">
+            <h3 id="password-verify-title">비밀번호 확인</h3>
+            <p>비밀번호 변경을 위해 현재 비밀번호를 입력해 주세요.</p>
+            <input
+                type="password"
+                id="password-verify-input"
+                autocomplete="current-password"
+                placeholder="현재 비밀번호"
+            >
+            <p id="password-verify-error" class="password-modal-error" hidden></p>
+            <div class="password-modal-actions">
+                <button type="button" id="password-verify-cancel">취소</button>
+                <button type="button" id="password-verify-submit">확인</button>
+            </div>
+        </div>
+    </div>
+</main>

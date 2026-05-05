@@ -18,6 +18,9 @@ header {
 }
 .nav-menu {
     background-color: rgb(114, 151, 40);
+    display: flex;
+    gap: 4px;
+    padding: 4px 8px;
 }
 
 .nav-tab {
@@ -25,6 +28,33 @@ header {
     position: sticky;
     top: 0;
     background-color: rgb(204, 255, 103);
+    display: flex;
+    gap: 4px;
+    padding: 4px 8px;
+}
+
+.nav-link {
+    color: #1f2937;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;
+    padding: 0 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.42);
+}
+
+.nav-link.active {
+    color: #ffffff;
+    background-color: #1f2937;
+    box-shadow: inset 0 -2px 0 rgba(255, 255, 255, 0.35);
 }
 
 main {

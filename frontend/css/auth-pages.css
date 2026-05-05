@@ -1,0 +1,82 @@
+.mypage-container,
+.password-change-container {
+    gap: 12px;
+    padding: 16px;
+}
+
+.password-change-container .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 420px;
+}
+
+.password-change-container input,
+.password-modal input {
+    min-height: 36px;
+    padding: 6px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.password-change-container button,
+.password-modal-actions button {
+    width: fit-content;
+    min-height: 34px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 4px;
+    background: #2563eb;
+    color: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.password-change-container #change-pw-cancel,
+.password-modal-actions #password-verify-cancel {
+    background: #64748b;
+}
+
+.password-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(15, 23, 42, 0.45);
+}
+
+.password-modal-backdrop[hidden] {
+    display: none;
+}
+
+.password-modal {
+    width: min(100%, 380px);
+    padding: 20px;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.22);
+}
+
+.password-modal h3 {
+    margin-top: 0;
+}
+
+.password-modal input {
+    width: 100%;
+}
+
+.password-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.password-modal-error {
+    color: #dc2626;
+    font-size: 14px;
+}

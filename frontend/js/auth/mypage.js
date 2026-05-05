@@ -1,42 +1,76 @@
-// 페이지 로드 시 내 정보 채우기
-async function fetchProfile() {
-    try {
-        const response = await fetch('/api/users/profile');
-        if (response.ok) {
-            const data = await response.json();
-            document.getElementById('username').value = data.username;
-        } else {
-            alert("로그인이 필요합니다.");
-            location.href = "/login";
-        }
-    } catch (error) {
-        console.error("프로필 로드 실패:", error);
-    }
-}
+import { fetchAPI } from '/js/api.js';
+import { navigateTo } from '/js/router.js';
 
-// 정보 수정 요청
-async function updateProfile() {
-    const password = document.getElementById('new-password').value;
-    const confirm = document.getElementById('confirm-password').value;
+const PASSWORD_CHANGE_TOKEN_KEY = 'passwordChangeToken';
 
-    if (password !== confirm) {
-        alert("비밀번호가 일치하지 않습니다.");
-        return;
-    }
+export function init() {
+    const changePasswordLink = document.getElementById('change-password-link');
+    const modal = document.getElementById('password-verify-modal');
+    const input = document.getElementById('password-verify-input');
+    const errorEl = document.getElementById('password-verify-error');
+    const cancelBtn = document.getElementById('password-verify-cancel');
+    const submitBtn = document.getElementById('password-verify-submit');
 
-    const response = await fetch('/api/users/profile', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: password })
+    if (!changePasswordLink || !modal || !input || !cancelBtn || !submitBtn) return;
+
+    const setError = (message) => {
+        if (!errorEl) return;
+        errorEl.textContent = message;
+        errorEl.hidden = !message;
+    };
+
+    const closeModal = () => {
+        modal.hidden = true;
+        input.value = '';
+        setError('');
+    };
+
+    const openModal = () => {
+        modal.hidden = false;
+        input.focus();
+    };
+
+    changePasswordLink.addEventListener('click', (event) => {
+        event.preventDefault();
+        sessionStorage.removeItem(PASSWORD_CHANGE_TOKEN_KEY);
+        openModal();
     });
 
-    if (response.ok) {
-        alert("정보가 수정되었습니다. 다시 로그인 해주세요.");
-        // 비밀번호 변경 후엔 보통 로그아웃 처리
-        location.href = "/logout"; 
-    } else {
-        alert("수정에 실패했습니다.");
-    }
-}
+    cancelBtn.addEventListener('click', closeModal);
 
-document.addEventListener('DOMContentLoaded', fetchProfile);
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    input.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            submitBtn.click();
+        }
+    });
+
+    submitBtn.addEventListener('click', async () => {
+        const currentPassword = input.value.trim();
+        if (!currentPassword) {
+            setError('현재 비밀번호를 입력해 주세요.');
+            return;
+        }
+
+        try {
+            submitBtn.disabled = true;
+            const result = await fetchAPI('/users/me/password/verify', {
+                method: 'POST',
+                body: JSON.stringify({ current_password: currentPassword }),
+            });
+
+            sessionStorage.setItem(PASSWORD_CHANGE_TOKEN_KEY, result.verification_token);
+            closeModal();
+            navigateTo('/change-password');
+        } catch (error) {
+            setError(error.message || '비밀번호 확인에 실패했습니다.');
+        } finally {
+            submitBtn.disabled = false;
+        }
+    });
+}

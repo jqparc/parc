@@ -1,32 +1,80 @@
+<main class="main-container menu-admin-page">
+    <h2>메뉴/탭 관리</h2>
 
-    <main class="main-container">
-        <h2>내 메뉴 관리</h2>
+    <section class="menu-admin-section admin-only" hidden>
+        <h3>메뉴 추가</h3>
+        <form id="menu-create-form" class="admin-form">
+            <input name="menu_id" placeholder="메뉴 ID" required>
+            <input name="menu_name" placeholder="메뉴명" required>
+            <input name="href" placeholder="경로" required>
+            <select name="role">
+                <option value="ALL">ALL</option>
+                <option value="USER">USER</option>
+                <option value="MANAGER">MANAGER</option>
+                <option value="ADMIN">ADMIN</option>
+            </select>
+            <select name="use_yn">
+                <option value="Y">사용</option>
+                <option value="N">미사용</option>
+            </select>
+            <input name="seq" type="number" min="0" placeholder="순번" required>
+            <button type="submit">추가</button>
+        </form>
+    </section>
+
+    <section class="menu-admin-section">
         <h3>메뉴</h3>
-        <table class="common-table">
+        <table class="common-table menu-admin-table">
             <thead>
                 <tr>
-                    <th class="col-num">순번</th>
-                    <th class="col-num">메뉴명</th>
-                    <th class="col-num">사용여부</th>
+                    <th>순번</th>
+                    <th>메뉴명</th>
+                    <th>ID</th>
+                    <th>권한</th>
+                    <th>사용여부</th>
+                    <th class="admin-only" hidden>수정</th>
                 </tr>
             </thead>
-            <tbody class="common-tbody" id="tbody-menu">
-                
-            </tbody>
+            <tbody class="common-tbody" id="tbody-menu"></tbody>
         </table>
-        <h3>탭</h3>
-        <table class="common-table">
-            <thead class="common-thead">
+    </section>
+
+    <section class="menu-admin-section admin-only" hidden>
+        <h3>탭 추가</h3>
+        <form id="tab-create-form" class="admin-form">
+            <input name="tab_id" placeholder="탭 ID" required>
+            <input name="tab_name" placeholder="탭명" required>
+            <input name="href" placeholder="경로" required>
+            <select name="role">
+                <option value="ALL">ALL</option>
+                <option value="USER">USER</option>
+                <option value="MANAGER">MANAGER</option>
+                <option value="ADMIN">ADMIN</option>
+            </select>
+            <select name="use_yn">
+                <option value="Y">사용</option>
+                <option value="N">미사용</option>
+            </select>
+            <input name="seq" type="number" min="0" placeholder="순번" required>
+            <button type="submit">추가</button>
+        </form>
+    </section>
+
+    <section class="menu-admin-section">
+        <h3 id="tab-section-title">탭</h3>
+        <table class="common-table menu-admin-table">
+            <thead>
                 <tr>
-                    <th class="col-num">순번</th>
-                    <th class="col-num">탭명</th>
-                    <th class="col-num">사용여부</th>
+                    <th>순번</th>
+                    <th>탭명</th>
+                    <th>ID</th>
+                    <th>권한</th>
+                    <th>경로</th>
+                    <th>사용여부</th>
+                    <th class="admin-only" hidden>수정</th>
                 </tr>
             </thead>
-            <tbody class="common-tbody" id="tbody-tab">
-                
-            </tbody>
+            <tbody class="common-tbody" id="tbody-tab"></tbody>
         </table>
-    </main>
-</body>
-</html>
+    </section>
+</main>

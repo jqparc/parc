@@ -1,0 +1,51 @@
+<section class="post-write-page">
+    <div class="post-write-header">
+        <div>
+            <p class="post-write-kicker" id="post-write-board">Board</p>
+            <h2>글 작성</h2>
+        </div>
+        <a href="/economy/infos" class="post-write-cancel" id="post-write-cancel" data-link>목록</a>
+    </div>
+
+    <form id="post-write-form" class="post-write-form">
+        <div class="post-write-field">
+            <label for="post-board-id">게시판</label>
+            <select id="post-board-id" name="board_id" required></select>
+        </div>
+
+        <div class="post-write-field">
+            <label for="post-title">제목</label>
+            <input
+                type="text"
+                id="post-title"
+                name="title"
+                maxlength="200"
+                placeholder="제목을 입력하세요"
+                required
+            >
+        </div>
+
+        <div class="post-write-field">
+            <label for="post-content">내용</label>
+            <textarea
+                id="post-content"
+                name="content"
+                rows="14"
+                placeholder="내용을 입력하세요"
+                required
+            ></textarea>
+        </div>
+
+        <label class="post-write-check">
+            <input type="checkbox" id="post-is-notice" name="is_notice">
+            <span>공지글로 등록</span>
+        </label>
+
+        <p id="post-write-error" class="post-write-error" hidden></p>
+
+        <div class="post-write-actions">
+            <button type="button" class="post-write-secondary" id="post-write-back">취소</button>
+            <button type="submit" class="post-write-primary" id="post-write-submit">등록</button>
+        </div>
+    </form>
+</section>

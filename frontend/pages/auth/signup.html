@@ -1,27 +1,28 @@
-
-<main class="container">
-    <h2>새로운 계정 만들기 z🌱</h2>
-    <p>환영합니다! 정보를 입력해주세요.</p>
+<main class="container signup-container">
+    <h2>새 계정 만들기</h2>
+    <p>회원 정보를 입력해 주세요.</p>
 
     <div class="form-group">
         <label for="user_id">아이디 <small>(4~20자)</small></label>
-        <input type="text" id="user_id" placeholder="아이디 입력" required>
+        <input type="text" id="user_id" placeholder="아이디 입력" autocomplete="username" required>
+        <small id="user_id_msg" class="field-msg" hidden></small>
     </div>
     
     <div class="form-group">
         <label for="password">비밀번호 <small>(8자 이상, 영문+숫자 포함)</small></label>
-        <input type="password" id="password" placeholder="비밀번호 입력" required>
+        <input type="password" id="password" placeholder="비밀번호 입력" autocomplete="new-password" required>
     </div>
     
     <div class="form-group">
         <label for="confirm_password">비밀번호 확인</label>
-        <input type="password" id="confirm_password" placeholder="비밀번호 다시 입력" required>
-        <small id="password_msg" style="display:none; margin-top: 5px;"></small>
+        <input type="password" id="confirm_password" placeholder="비밀번호 다시 입력" autocomplete="new-password" required>
+        <small id="password_msg" class="field-msg" hidden></small>
     </div>
 
     <div class="form-group">
         <label for="nickname">닉네임 <small>(2~20자)</small></label>
         <input type="text" id="nickname" placeholder="닉네임 입력" required>
+        <small id="nickname_msg" class="field-msg" hidden></small>
     </div>
     
     <div class="form-group">

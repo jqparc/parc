@@ -1,15 +1,12 @@
 # backend/api/v1/endpoints/economy.py
-from fastapi import APIRouter, Depends, HTTPException
-from api.v1.dependencies.auth_deps import get_current_user
+from fastapi import APIRouter, HTTPException
 from services.economy_service import economy_service
 from schemas.economy_schema import IndicatorSummaryResponse, IndicatorHistoryResponse
 
 router = APIRouter()
 
 @router.get("/indicators/summary", response_model=IndicatorSummaryResponse)
-async def get_economy_summaries(
-    current_user=Depends(get_current_user)  # 인증된 유저만 접근 가능
-):
+async def get_economy_summaries():
     """
     [표 렌더링용 API]
     등록된 모든 경제 지표의 최신 요약 데이터(현재가, 전일가, 등락폭, 등락률 등)를 가볍게 반환합니다.
@@ -20,10 +17,7 @@ async def get_economy_summaries(
     return data
 
 @router.get("/indicators/{symbol}/history", response_model=IndicatorHistoryResponse)
-async def get_economy_history(
-    symbol: str,
-    current_user=Depends(get_current_user)  # 인증된 유저만 접근 가능
-):
+async def get_economy_history(symbol: str):
     """
     [차트 렌더링용 API]
     특정 지표(symbol)의 최근 1년치 일별 시계열 데이터(날짜, 종가)를 반환합니다.

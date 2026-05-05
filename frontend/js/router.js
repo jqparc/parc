@@ -1,9 +1,11 @@
 // frontend/js/router.js
 import { renderNavigation } from '/js/components/navigation.js';
-import { updateAuthUI } from '/js/auth/check_auth.js';
+import { checkAuthStatus, updateAuthUI } from '/js/auth/check_auth.js';
 import { authGuard } from '/js/auth/guard.js';
 
 let currentModule = null;
+let activeRouteKey = null;
+let pendingRouteKey = null;
 
 // 모든 HTML과 JS 경로를 하드코딩된 절대경로(/)로 고정
 const routes = {
@@ -23,7 +25,8 @@ const routes = {
     },
     "/mypage": {
         html: "/pages/auth/mypage.html",
-        js: "/js/auth/mypage.js"
+        js: "/js/auth/mypage.js",
+        auth: true
     },
     "/profile": {
         html: "/pages/auth/profile.html",
@@ -31,11 +34,17 @@ const routes = {
     },
     "/change-password": {
         html: "/pages/auth/change-password.html",
-        js: "/js/auth/change-password.js"
+        js: "/js/auth/change-password.js",
+        auth: true
     },
     "/menu": {
         html: "/pages/auth/menu.html",
         js: "/js/auth/menu.js"
+    },
+    "/boards/write": {
+        html: "/pages/boards/write.html",
+        js: "/js/boards/post-write.js",
+        auth: true
     },
     "/economy/infos": {
         html: "/pages/economy/infos.html",
@@ -59,16 +68,51 @@ const routes = {
         js: null, 
         auth: true
     },
+    "/asset/stck": {
+        html: "/pages/asset/stck.html",
+        js: "/js/asset/stck.js",
+        auth: true,
+        requireLogin: true
+    },
 };
 
 const router = async () => {
     const path = window.location.pathname;
-    const route = routes[path] || { html: "/pages/404.html", js: null, auth: false }; 
+    const routeKey = `${window.location.pathname}${window.location.search}`;
+
+    if (pendingRouteKey === routeKey || activeRouteKey === routeKey) {
+        return;
+    }
+
+    pendingRouteKey = routeKey;
+
+    const route = routes[path] || (
+        /^\/economy\/infos\/\d+\/edit$/.test(path)
+            ? {
+                html: "/pages/boards/edit.html",
+                js: "/js/boards/post-edit.js",
+                auth: true
+            }
+            : /^\/economy\/infos\/\d+$/.test(path)
+                ? {
+                html: "/pages/boards/detail.html",
+                js: "/js/boards/post-detail.js",
+                auth: false
+            }
+                : { html: "/pages/404.html", js: null, auth: false }
+    );
+
+    let didRedirect = false;
 
     try {
-        const redirectPath = await authGuard(route); 
+        const authUser = await checkAuthStatus();
+        const redirectPath = await authGuard(route, authUser, routeKey, path);
         if (redirectPath) {
-            navigateTo(redirectPath);
+            didRedirect = true;
+            history.pushState(null, null, redirectPath);
+            pendingRouteKey = null;
+            activeRouteKey = null;
+            await router();
             return;
         }
 
@@ -94,8 +138,8 @@ const router = async () => {
         } else {
             currentModule = null;
         }
-        await updateAuthUI() 
-        renderNavigation();       
+        await updateAuthUI(authUser);
+        await renderNavigation({ resetToFirst: path === "/" });
         
 
     } catch (error) {
@@ -106,11 +150,26 @@ const router = async () => {
                 <p>요청하신 페이지를 찾을 수 없습니다.</p>
             </div>
         `;
+    } finally {
+        if (!didRedirect) {
+            activeRouteKey = routeKey;
+        }
+
+        if (pendingRouteKey === routeKey) {
+            pendingRouteKey = null;
+        }
     }
 };
 
 export const navigateTo = (url) => {
+    const targetUrl = new URL(url, window.location.origin);
+    const currentUrl = new URL(window.location.href);
+    if (targetUrl.pathname === currentUrl.pathname && targetUrl.search === currentUrl.search) {
+        return;
+    }
+
     history.pushState(null, null, url);
+    activeRouteKey = null;
     router();
 };
 

@@ -1,48 +1,24 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>경제정보 - Parc</title>
-    <link rel="stylesheet" href="/css/style.css">
-    </head>
-<body>
-    <div id="header-placeholder"></div>
-        
-    <div id="nav-placeholder"></div>
-
-    <main class="main-container">
-        <div class="split-container">
-            <div class="split-left">
-                <h2>경제 정보</h2>
-            </div>
-            <div class="split-right">
-                <a href="#" class="write-btn">글쓰기</a>
-            </div>
+<main class="main-container">
+    <div class="split-container">
+        <div class="split-left">
+            <h2>경제 정보</h2>
         </div>
-        
-        <div class="table-container">
-            <table class="infos-table">
-                <thead>
-                    <tr>
-                        <th class="col-num">번호</th>
-                        <th class="col-num">제목</th>
-                        <th class="col-num">등록일</th>
-                    </tr>
-                </thead>
-                <tbody id="inofs-list">
-                    
-                </tbody>
-            </table>
-            <div class="pagination-container" id="pagination">
-
-            </div>
+        <div class="split-right">
+            <a href="/boards/write?board=economy-info&return=/economy/infos" class="write-btn" data-link hidden>글쓰기</a>
         </div>
-    </main>
+    </div>
 
-    <div id="footer-placeholder"></div>
-
-    <script type="module" src="/js/load_layout.js"></script>
-    
-    <script type="module" src="/js/boards/economy-infos.js"></script>
-</body>
-</html>
+    <div class="table-container">
+        <table class="infos-table">
+            <thead>
+                <tr>
+                    <th class="col-num">번호</th>
+                    <th>제목</th>
+                    <th class="col-date">등록일</th>
+                </tr>
+            </thead>
+            <tbody id="economy-list"></tbody>
+        </table>
+        <div class="pagination-container" id="pagination-container"></div>
+    </div>
+</main>

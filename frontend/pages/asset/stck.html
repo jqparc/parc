@@ -1,0 +1,74 @@
+<main class="main-container stock-page">
+    <section class="stock-section">
+        <h2>국내주식 추가</h2>
+        <form id="stock-form" class="stock-form">
+            <label>
+                종목코드
+                <input name="stock_code" placeholder="005930" required>
+            </label>
+            <label>
+                종목명
+                <input name="stock_name" placeholder="삼성전자" required>
+            </label>
+            <label>
+                시장
+                <select name="market">
+                    <option value="KOSPI">KOSPI</option>
+                    <option value="KOSDAQ">KOSDAQ</option>
+                    <option value="KONEX">KONEX</option>
+                    <option value="ETF">ETF</option>
+                    <option value="ETN">ETN</option>
+                </select>
+            </label>
+            <label>
+                보유수량
+                <input name="quantity" type="number" min="1" step="1" required>
+            </label>
+            <label>
+                매입가
+                <input name="purchase_price" type="number" min="0" step="0.01" required>
+            </label>
+            <label>
+                매입일
+                <input name="purchase_date" type="date" required>
+            </label>
+            <label>
+                현재가
+                <input name="current_price" type="number" min="0" step="0.01" placeholder="선택">
+            </label>
+            <label class="stock-form-wide">
+                메모
+                <input name="memo" placeholder="계좌, 투자 이유, 목표가 등">
+            </label>
+            <button type="submit">추가</button>
+        </form>
+        <p id="stock-form-error" class="stock-error" hidden></p>
+    </section>
+
+    <section class="stock-section">
+        <div class="stock-list-header">
+            <h2>내 국내주식</h2>
+            <div class="stock-summary" id="stock-summary"></div>
+        </div>
+        <div class="stock-table-wrap">
+            <table class="common-table stock-table">
+                <thead>
+                    <tr>
+                        <th>종목</th>
+                        <th>시장</th>
+                        <th>수량</th>
+                        <th>매입가</th>
+                        <th>매입일</th>
+                        <th>투자금액</th>
+                        <th>현재가</th>
+                        <th>평가금액</th>
+                        <th>손익</th>
+                        <th>메모</th>
+                        <th>관리</th>
+                    </tr>
+                </thead>
+                <tbody id="stock-list"></tbody>
+            </table>
+        </div>
+    </section>
+</main>

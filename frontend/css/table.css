@@ -103,3 +103,27 @@
     color: white;
     border-color: #333;
 }
+
+.write-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    padding: 0 14px;
+    border-radius: 6px;
+    background: #2563eb;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.write-btn[hidden] {
+    display: none;
+}
+
+.empty-cell {
+    padding: 48px 12px;
+    color: #667085;
+    text-align: center;
+}

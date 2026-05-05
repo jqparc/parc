@@ -1,0 +1,126 @@
+.stock-page {
+    gap: 18px;
+    padding: 16px;
+}
+
+.stock-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.stock-form {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(140px, 1fr));
+    gap: 10px;
+    align-items: end;
+}
+
+.stock-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.stock-form input,
+.stock-form select {
+    min-height: 34px;
+    padding: 6px 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    background: #ffffff;
+    box-sizing: border-box;
+}
+
+.stock-form-wide {
+    grid-column: span 2;
+}
+
+.stock-form button,
+.stock-delete-btn {
+    min-height: 34px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 4px;
+    background: #2563eb;
+    color: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.stock-delete-btn {
+    background: #64748b;
+}
+
+.stock-list-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+}
+
+.stock-summary {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.stock-table-wrap {
+    overflow-x: auto;
+}
+
+.stock-table {
+    min-width: 1100px;
+}
+
+.stock-table th,
+.stock-table td {
+    padding: 8px;
+    border-bottom: 1px solid #d9dee8;
+}
+
+.stock-name-cell {
+    text-align: left;
+}
+
+.stock-name-cell small {
+    display: block;
+}
+
+.stock-memo-cell {
+    max-width: 220px;
+    text-align: left;
+}
+
+.stock-profit-plus {
+    color: #dc2626;
+}
+
+.stock-profit-minus {
+    color: #2563eb;
+}
+
+.stock-error {
+    color: #dc2626;
+    font-weight: 700;
+}
+
+@media (max-width: 900px) {
+    .stock-form {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .stock-form-wide {
+        grid-column: span 2;
+    }
+
+    .stock-list-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

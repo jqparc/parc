@@ -1,5 +1,5 @@
 # Python 관련 쓰레기 파일들
-__pycache__/
+**/__pycache__/
 *.py[cod]
 *$py.class
 junq/
