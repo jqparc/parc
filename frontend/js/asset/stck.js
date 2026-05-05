@@ -1,7 +1,18 @@
+// frontend/js/assets/domestic-stocks.js
 import { fetchAPI } from '/js/api.js';
 
 const API_PATH = '/assets/domestic-stocks';
 
+// --- 💡 [DOM 캐싱] 문서 전체 탐색 최소화 ---
+const DOM = {
+    form: () => document.getElementById('stock-form'),
+    dateInput: () => document.querySelector('#stock-form input[name="purchase_date"]'),
+    error: () => document.getElementById('stock-form-error'),
+    summary: () => document.getElementById('stock-summary'),
+    tbody: () => document.getElementById('stock-list')
+};
+
+// --- 💡 [포맷팅 유틸리티] ---
 function formatNumber(value, fractionDigits = 0) {
     if (value === null || value === undefined || value === '') return '-';
     return Number(value).toLocaleString('ko-KR', {
@@ -22,10 +33,10 @@ function getProfitClass(value) {
     return '';
 }
 
+// --- 💡 [UI 헬퍼] ---
 function setError(message) {
-    const errorEl = document.getElementById('stock-form-error');
+    const errorEl = DOM.error();
     if (!errorEl) return;
-
     errorEl.textContent = message;
     errorEl.hidden = !message;
 }
@@ -44,13 +55,9 @@ function getPayload(form) {
     return payload;
 }
 
-async function loadHoldings() {
-    const holdings = await fetchAPI(API_PATH);
-    renderHoldings(Array.isArray(holdings) ? holdings : []);
-}
-
+// --- 💡 [데이터 렌더링 로직] ---
 function renderSummary(holdings) {
-    const summaryEl = document.getElementById('stock-summary');
+    const summaryEl = DOM.summary();
     if (!summaryEl) return;
 
     const invested = holdings.reduce((sum, item) => sum + Number(item.invested_amount || 0), 0);
@@ -67,7 +74,7 @@ function renderSummary(holdings) {
 }
 
 function renderHoldings(holdings) {
-    const tbody = document.getElementById('stock-list');
+    const tbody = DOM.tbody();
     if (!tbody) return;
 
     renderSummary(holdings);
@@ -77,6 +84,7 @@ function renderHoldings(holdings) {
         return;
     }
 
+    // 🔥 더 이상 여기서 버튼마다 이벤트를 달지 않습니다! 순수하게 HTML 문자열만 생성합니다.
     tbody.innerHTML = holdings.map(item => {
         const profitText = item.profit_loss === null || item.profit_loss === undefined
             ? '-'
@@ -88,10 +96,10 @@ function renderHoldings(holdings) {
                     <strong>${item.stock_name}</strong>
                     <small>${item.stock_code}</small>
                 </td>
-                <td>${item.market}</td>
+                <td>${item.market || '-'}</td>
                 <td>${formatNumber(item.quantity)}</td>
                 <td>${formatWon(item.purchase_price)}</td>
-                <td>${item.purchase_date}</td>
+                <td>${item.purchase_date || '-'}</td>
                 <td>${formatWon(item.invested_amount)}</td>
                 <td>${formatWon(item.current_price)}</td>
                 <td>${formatWon(item.valuation_amount)}</td>
@@ -103,49 +111,76 @@ function renderHoldings(holdings) {
             </tr>
         `;
     }).join('');
-
-    tbody.querySelectorAll('.stock-delete-btn').forEach(button => {
-        button.addEventListener('click', async () => {
-            if (!confirm('이 보유 종목을 삭제할까요?')) return;
-            await fetchAPI(`${API_PATH}/${button.dataset.id}`, { method: 'DELETE' });
-            await loadHoldings();
-        });
-    });
 }
 
-export function init() {
-    const form = document.getElementById('stock-form');
-    if (form) {
-        const dateInput = form.querySelector('input[name="purchase_date"]');
-        if (dateInput && !dateInput.value) {
-            dateInput.value = new Date().toISOString().slice(0, 10);
-        }
+async function loadHoldings() {
+    try {
+        const holdings = await fetchAPI(API_PATH);
+        renderHoldings(Array.isArray(holdings) ? holdings : []);
+    } catch (error) {
+        console.error('Failed to load domestic stock holdings:', error);
+        const tbody = DOM.tbody();
+        if (tbody) tbody.innerHTML = '<tr><td colspan="11" class="empty-cell">보유 종목을 불러오지 못했습니다.</td></tr>';
+    }
+}
 
-        form.addEventListener('submit', async event => {
-            event.preventDefault();
-            setError('');
+// --- 💡 [이벤트 핸들러] 폼 제출 및 테이블 클릭 위임 ---
+async function handleFormSubmit(event) {
+    event.preventDefault();
+    setError('');
 
-            try {
-                await fetchAPI(API_PATH, {
-                    method: 'POST',
-                    body: JSON.stringify(getPayload(form)),
-                });
-                form.reset();
-                if (dateInput) {
-                    dateInput.value = new Date().toISOString().slice(0, 10);
-                }
-                await loadHoldings();
-            } catch (error) {
-                setError(error.message || '국내주식을 추가하지 못했습니다.');
-            }
+    const form = DOM.form();
+    try {
+        await fetchAPI(API_PATH, {
+            method: 'POST',
+            body: JSON.stringify(getPayload(form)),
         });
+        
+        form.reset(); // 입력 폼 초기화
+        const dateInput = DOM.dateInput();
+        if (dateInput) dateInput.value = new Date().toISOString().slice(0, 10);
+        
+        await loadHoldings(); // 목록 새로고침
+    } catch (error) {
+        setError(error.message || '국내주식을 추가하지 못했습니다.');
+    }
+}
+
+async function handleTableClick(event) {
+    // 🔥 핵심: 이벤트 위임(Event Delegation)
+    // tbody 전체에서 발생하는 클릭 중, 삭제 버튼에서 발생한 클릭만 낚아챕니다.
+    const deleteBtn = event.target.closest('.stock-delete-btn');
+    if (!deleteBtn) return;
+
+    if (!confirm('이 보유 종목을 삭제할까요?')) return;
+    
+    try {
+        await fetchAPI(`${API_PATH}/${deleteBtn.dataset.id}`, { method: 'DELETE' });
+        await loadHoldings();
+    } catch (error) {
+        alert(error.message || '삭제에 실패했습니다.');
+    }
+}
+
+// --- 💡 [메인 로직] 초기화 및 클린업 ---
+export function init() {
+    const form = DOM.form();
+    const tbody = DOM.tbody();
+    const dateInput = DOM.dateInput();
+
+    if (dateInput && !dateInput.value) {
+        dateInput.value = new Date().toISOString().slice(0, 10);
     }
 
-    loadHoldings().catch(error => {
-        console.error('Failed to load domestic stock holdings:', error);
-        const tbody = document.getElementById('stock-list');
-        if (tbody) {
-            tbody.innerHTML = '<tr><td colspan="11" class="empty-cell">보유 종목을 불러오지 못했습니다.</td></tr>';
-        }
-    });
+    // SPA 환경 최적화: 중복 등록 방지를 위해 onclick/onsubmit 활용
+    if (form) form.onsubmit = handleFormSubmit;
+    if (tbody) tbody.onclick = handleTableClick;
+
+    loadHoldings();
+}
+
+export function cleanup() {
+    // 메모리 누수 방지: 화면 이탈 시 이벤트 핸들러 제거
+    if (DOM.form()) DOM.form().onsubmit = null;
+    if (DOM.tbody()) DOM.tbody().onclick = null;
 }
