@@ -1,3 +1,5 @@
+// frontend/js/utils/loader.js
+
 const GLOBAL_STYLES = [
     '/css/style.css',
     '/css/table.css',
@@ -6,7 +8,10 @@ const GLOBAL_STYLES = [
     '/css/asset-stck.css'
 ];
 
-function injectGlobalStyles() {
+/**
+ * 전역 스타일 시트를 헤드에 주입합니다.
+ */
+export function injectGlobalStyles() {
     GLOBAL_STYLES.forEach(href => {
         if (!document.querySelector(`link[href="${href}"]`)) {
             const link = document.createElement('link');
@@ -17,6 +22,9 @@ function injectGlobalStyles() {
     });
 }
 
+/**
+ * 특정 컨테이너에 HTML/CSS/JS 컴포넌트를 로드합니다.
+ */
 export async function loadComponent(targetId, htmlPath, cssPath = null, jsPath = null) {
     try {
         const targetElement = document.getElementById(targetId);
@@ -35,28 +43,9 @@ export async function loadComponent(targetId, htmlPath, cssPath = null, jsPath =
         }
 
         if (jsPath) {
-            await import(jsPath);
+            await import(jsPath); // 모듈 동적 로드[cite: 3]
         }
     } catch (error) {
         console.error('[LoadComponent Error]:', error);
     }
 }
-
-document.addEventListener("DOMContentLoaded", async () => {
-    injectGlobalStyles();
-
-    await loadComponent(
-        'header-container',
-        '/components/header.html',
-        null,
-        '/js/auth/check_auth.js'
-    );
-
-    await loadComponent(
-        'nav-container',
-        '/components/navigation.html',
-        null
-    );
-
-    document.dispatchEvent(new Event("layoutLoaded"));
-});

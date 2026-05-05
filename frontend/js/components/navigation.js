@@ -1,192 +1,109 @@
+// frontend/js/components/navigation.js
 import { fetchAPI } from '/js/api.js';
 import { navigateTo } from '/js/router.js';
 
-// 캐싱 및 상태 관리를 위한 변수들
-let menusPromise = null; // 메뉴 데이터를 한 번만 가져오기 위한 프로미스
-const tabsPromiseByMenuId = new Map(); // 메뉴 ID별 탭 데이터를 저장하는 캐시 맵
-let renderPromise = null; // 중복 렌더링 방지를 위한 프로미스
-
-// [API] 서버로부터 상위 메뉴 목록을 가져오는 함수
-function fetchMenus() {
-    if (!menusPromise) {
-        menusPromise = fetchAPI('/menus/').catch(error => {
-            menusPromise = null; // 에러 발생 시 재시도 가능하도록 초기화
-            throw error;
-        });
-    }
-    return menusPromise;
-}
-
-// [API] 특정 메뉴에 속한 하위 탭 목록을 가져오는 함수
-async function fetchTabs(menuId) {
-    if (!menuId) return []; // 메뉴 ID가 없으면 빈 배열 반환
-    if (!tabsPromiseByMenuId.has(menuId)) {
-        const promise = fetchAPI(`/tabs/?menu_id=${encodeURIComponent(menuId)}`)
-            .catch(error => {
-                tabsPromiseByMenuId.delete(menuId);
-                throw error;
-            });
-        tabsPromiseByMenuId.set(menuId, promise);
-    }
-
-    const tabs = await tabsPromiseByMenuId.get(menuId);
-    // 사용 여부(use_yn)가 'Y'인 탭만 필터링하여 반환
-    return Array.isArray(tabs) ? tabs.filter(tab => tab.use_yn === 'Y') : [];
-}
-
-// [Util] 경로 문자열을 일관된 형태로 정규화하는 함수
-function normalizePath(path) {
-    if (!path || path === '#') return null;
+// 1. [API] 상위 메뉴 및 하위 탭 데이터 패칭 함수 (순수 데이터만 가져옴)
+async function getMenus() {
     try {
-        return new URL(path, window.location.origin).pathname;
-    } catch {
-        return path.startsWith('/') ? path : `/${path}`;
-    }
+        const menus = await fetchAPI('/menus/');
+        return Array.isArray(menus) ? menus.filter(m => m.use_yn === 'Y') : [];
+    } catch { return []; }
 }
 
-// [Util] 현재 경로와 메뉴의 href가 일치하는지 확인하여 활성화 여부 판단
-function isActiveHref(currentPath, href) {
-    const targetPath = normalizePath(href);
-    if (!targetPath) return false;
-    if (targetPath === '/') return currentPath === targetPath;
-    // 현재 경로가 대상 경로와 같거나 하위 경로인 경우 true
-    return currentPath === targetPath || currentPath.startsWith(`${targetPath}/`);
+async function getTabs(menuId) {
+    if (!menuId) return [];
+    try {
+        const tabs = await fetchAPI(`/tabs/?menu_id=${encodeURIComponent(menuId)}`);
+        return Array.isArray(tabs) ? tabs.filter(t => t.use_yn === 'Y') : [];
+    } catch { return []; }
 }
 
-// [Logic] 현재 URL 경로에 가장 적합한 메뉴 ID를 찾는 함수
-function findMenuIdByPath(activeMenus, currentPath) {
-    const matchedMenu = activeMenus
-        .filter(menu => isActiveHref(currentPath, menu.href))
-        // 가장 구체적으로 일치하는 경로(길이가 긴 것)를 우선 선택
-        .sort((a, b) => (normalizePath(b.href) || '').length - (normalizePath(a.href) || '').length)[0];
-
-    return matchedMenu?.menu_id || null;
-}
-
-// [Logic] 페이지 로드 시 어떤 메뉴를 활성화할지 결정하는 함수 (수정 대상)
-function getInitialMenuId(activeMenus, currentPath, resetToFirst = false) {
-    // 1. 인덱스 페이지(/)인 경우 아무것도 선택하지 않음
-    if (currentPath === '/' || currentPath === '/index.html') {
-        return null;
-    }
-
-    if (resetToFirst) {
-        return activeMenus[0]?.menu_id || null;
-    }
-
-    // 2. 현재 경로와 일치하는 메뉴가 있는지 확인
-    const pathMenuId = findMenuIdByPath(activeMenus, currentPath);
-    if (pathMenuId) {
-        return pathMenuId;
-    }
-
-    // 3. 세션 스토리지에 저장된 마지막 메뉴 확인
-    const savedMenuId = sessionStorage.getItem('currentMenuId');
-    if (savedMenuId && activeMenus.some(menu => menu.menu_id === savedMenuId)) {
-        return savedMenuId;
-    }
-
-    return null;
-}
-
-// [Render] 상위 네비게이션 HTML을 생성하고 컨테이너에 삽입하는 함수
-function renderTopMenus(container, activeMenus, activeMenuId) {
-    container.innerHTML = activeMenus.map(menu => `
-        <a href="#"
-           class="nav-link ${activeMenuId === menu.menu_id ? 'active' : ''}"
-           data-menu-id="${menu.menu_id}"
-           ${activeMenuId === menu.menu_id ? 'aria-current="true"' : ''}
-           data-action="top-menu">${menu.menu_name}</a>
-    `).join('');
-}
-
-// [Render] 하위 탭 네비게이션 HTML을 생성하고 컨테이너에 삽입하는 함수
-function renderBottomTabs(container, tabs, currentPath) {
-    if (tabs.length === 0) {
-        container.innerHTML = '';
-        return;
-    }
+// 2. [UI 헬퍼] 탭을 화면에 그리는 역할 분리
+function renderTabsToDOM(container, tabs, menuId) {
+    container.dataset.renderedMenuId = menuId; // 🔥 핵심 로직 1: 현재 그려진 탭의 부모 메뉴 ID를 DOM에 기록
     container.innerHTML = tabs.map(tab => `
-        <a href="${tab.href}"
-           class="nav-link ${isActiveHref(currentPath, tab.href) ? 'active' : ''}"
-           ${isActiveHref(currentPath, tab.href) ? 'aria-current="page"' : ''}
-           data-link>${tab.tab_name}</a>
+        <a href="${tab.href}" class="nav-link" data-link>${tab.tab_name}</a>
     `).join('');
 }
 
-// [Main] 실제 네비게이션 렌더링 및 이벤트 바인딩을 수행하는 비동기 함수
-async function doRenderNavigation({ resetToFirst = false } = {}) {
-    const currentPath = window.location.pathname;
-    const navtopContainer = document.getElementById('nav-top');
-    const navbottomContainer = document.getElementById('nav-bottom');
-
-    if (!navtopContainer || !navbottomContainer) return;
-
-    try {
-        const menus = await fetchMenus();
-        const activeMenus = Array.isArray(menus) ? menus.filter(menu => menu.use_yn === 'Y') : [];
-
-        if (activeMenus.length === 0) {
-            navtopContainer.innerHTML = '';
-            navbottomContainer.innerHTML = '';
-            return;
-        }
-
-        // 초기 메뉴 ID 결정 (수정된 로직 적용)
-        const activeMenuId = getInitialMenuId(activeMenus, currentPath, resetToFirst);
-        
-        // 메뉴 상태 저장 및 렌더링
-        if (activeMenuId) {
-            sessionStorage.setItem('currentMenuId', activeMenuId);
-        } else {
-            sessionStorage.removeItem('currentMenuId'); // 인덱스일 경우 세션 비움
-        }
-
-        renderTopMenus(navtopContainer, activeMenus, activeMenuId);
-        const activeMenuTabs = await fetchTabs(activeMenuId);
-        renderBottomTabs(navbottomContainer, activeMenuTabs, currentPath);
-
-        // 이벤트 리스너 등록 (상위 메뉴 클릭 시)
-        navtopContainer.querySelectorAll('a[data-action="top-menu"]').forEach(link => {
-            link.addEventListener('click', async (event) => {
-                event.preventDefault();
-                const menuId = event.currentTarget.getAttribute('data-menu-id');
-                sessionStorage.setItem('currentMenuId', menuId);
-
-                const tabs = await fetchTabs(menuId);
-                if (tabs.length > 0) {
-                    navigateTo(tabs[0].href); // 탭이 있으면 첫 번째 탭으로 이동
-                    return;
-                }
-                // 탭이 없으면 상위 메뉴만 활성화 표시
-                renderTopMenus(navtopContainer, activeMenus, menuId);
-                renderBottomTabs(navbottomContainer, [], currentPath);
-            });
-        });
-
-        // 이벤트 리스너 등록 (하위 탭 클릭 시 - SPA 라우팅 적용)
-        navbottomContainer.querySelectorAll('a[data-link]').forEach(link => {
-            link.addEventListener('click', (event) => {
-                event.preventDefault();
-                const href = event.currentTarget.getAttribute('href');
-                if (href && href !== '#') {
-                    navigateTo(href);
-                }
-            });
-        });
-    } catch (error) {
-        console.error('Navigation render failed:', error);
-        navtopContainer.innerHTML = '';
-        navbottomContainer.innerHTML = '';
-    }
+// 3. [UI 헬퍼] CSS(.active) 상태만 가볍게 업데이트
+function updateActiveClasses(currentPath, activeMenuId) {
+    document.querySelectorAll('#nav-top a').forEach(link => {
+        link.classList.toggle('active', link.dataset.menuId === activeMenuId);
+    });
+    document.querySelectorAll('#nav-bottom a').forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === currentPath);
+    });
 }
 
-// 외부에서 호출하는 인터페이스 함수 (렌더링 동시성 제어)
-export function renderNavigation(options = {}) {
-    if (!renderPromise) {
-        renderPromise = doRenderNavigation(options).finally(() => {
-            renderPromise = null;
+// 4. [Main] 똑똑해진 네비게이션 렌더링 함수
+export async function renderNavigation() {
+    const currentPath = window.location.pathname;
+    const navTop = document.getElementById('nav-top');
+    const navBottom = document.getElementById('nav-bottom');
+
+    if (!navTop || !navBottom) return;
+
+    // --- 💡 [논리 개선 1] 상위 메뉴가 화면에 없을 때만 API 호출 ---
+    if (navTop.children.length === 0) {
+        const menus = await getMenus();
+        if (menus.length === 0) return;
+
+        navTop.innerHTML = menus.map(menu => `
+            <a href="${menu.href || '#'}" class="nav-link" 
+               data-menu-id="${menu.menu_id}" 
+               data-menu-href="${menu.href || ''}">${menu.menu_name}</a>
+        `).join('');
+
+        // 상위 메뉴 클릭 이벤트 위임 (한 번만 등록)
+        navTop.addEventListener('click', async (e) => {
+            const link = e.target.closest('a[data-menu-id]');
+            if (!link) return;
+            e.preventDefault();
+
+            const menuId = link.dataset.menuId;
+            const menuTabs = await getTabs(menuId);
+
+            if (menuTabs.length > 0) {
+                // 🔥 핵심 로직 2: 화면 이동(navigateTo)을 하기 직전에 미리 탭을 화면에 그려버림!
+                renderTabsToDOM(navBottom, menuTabs, menuId); 
+                navigateTo(menuTabs[0].href);
+            } else {
+                const href = link.getAttribute('href');
+                if (href && href !== '#') navigateTo(href);
+            }
         });
     }
-    return renderPromise;
+
+    // --- 💡 [논리 개선 2] 현재 URL에 맞는 상위 메뉴 ID 찾기 (화면에 그려진 DOM 기준) ---
+    let activeMenuId = null;
+    
+    // 메인 화면(/)이 아닐 때만 활성화할 상위 메뉴를 찾음
+    if (currentPath !== '/' && currentPath !== '/index.html') {
+        const topLinks = Array.from(navTop.querySelectorAll('a[data-menu-id]'));
+        for (const link of topLinks) {
+            const menuHref = link.dataset.menuHref;
+            if (menuHref && menuHref !== '#' && currentPath.startsWith(menuHref)) {
+                activeMenuId = link.dataset.menuId;
+                break;
+            }
+        }
+    }
+
+    // --- 💡 [논리 개선 3] 탭 중복 호출 방지 및 메인 화면 초기화 ---
+    const currentRenderedMenuId = navBottom.dataset.renderedMenuId;
+    
+    if (!activeMenuId) {
+        // 🔥 수정됨: 메인 화면 등 활성화된 상위 메뉴가 없을 때는 하위 탭을 비움
+        navBottom.innerHTML = '';
+        delete navBottom.dataset.renderedMenuId; // 기록된 부모 ID도 삭제
+    } 
+    else if (currentRenderedMenuId !== activeMenuId) {
+        // 활성화되어야 할 상위 메뉴가 바뀌었을 때만 API 호출 후 새로 그림
+        const tabs = await getTabs(activeMenuId);
+        renderTabsToDOM(navBottom, tabs, activeMenuId);
+    }
+
+    // --- 💡 [논리 개선 4] 데이터 호출 없이 가볍게 UI 상태만 변경 ---
+    updateActiveClasses(currentPath, activeMenuId);
 }

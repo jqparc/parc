@@ -1,6 +1,40 @@
 <main class="main-container menu-admin-page">
     <h2>메뉴/탭 관리</h2>
 
+    <section class="menu-admin-section">
+        <h3>메뉴</h3>
+        <table class="common-table menu-admin-table">
+            <thead>
+                <tr>
+                    <th>순번</th>
+                    <th>메뉴명</th>
+                    <th>ID</th>
+                    <th>권한</th>
+                    <th>사용여부</th>
+                    <th class="admin-only" hidden>수정</th>
+                </tr>
+            </thead>
+            <tbody class="common-tbody" id="tbody-menu"></tbody>
+        </table>
+    </section>
+    <section class="menu-admin-section">
+        <h3 id="tab-section-title">탭</h3>
+        <table class="common-table menu-admin-table">
+            <thead>
+                <tr>
+                    <th>순번</th>
+                    <th>탭명</th>
+                    <th>ID</th>
+                    <th>권한</th>
+                    <th>경로</th>
+                    <th>사용여부</th>
+                    <th class="admin-only" hidden>수정</th>
+                </tr>
+            </thead>
+            <tbody class="common-tbody" id="tbody-tab"></tbody>
+        </table>
+    </section>
+    
     <section class="menu-admin-section admin-only" hidden>
         <h3>메뉴 추가</h3>
         <form id="menu-create-form" class="admin-form">
@@ -22,22 +56,6 @@
         </form>
     </section>
 
-    <section class="menu-admin-section">
-        <h3>메뉴</h3>
-        <table class="common-table menu-admin-table">
-            <thead>
-                <tr>
-                    <th>순번</th>
-                    <th>메뉴명</th>
-                    <th>ID</th>
-                    <th>권한</th>
-                    <th>사용여부</th>
-                    <th class="admin-only" hidden>수정</th>
-                </tr>
-            </thead>
-            <tbody class="common-tbody" id="tbody-menu"></tbody>
-        </table>
-    </section>
 
     <section class="menu-admin-section admin-only" hidden>
         <h3>탭 추가</h3>
@@ -60,21 +78,4 @@
         </form>
     </section>
 
-    <section class="menu-admin-section">
-        <h3 id="tab-section-title">탭</h3>
-        <table class="common-table menu-admin-table">
-            <thead>
-                <tr>
-                    <th>순번</th>
-                    <th>탭명</th>
-                    <th>ID</th>
-                    <th>권한</th>
-                    <th>경로</th>
-                    <th>사용여부</th>
-                    <th class="admin-only" hidden>수정</th>
-                </tr>
-            </thead>
-            <tbody class="common-tbody" id="tbody-tab"></tbody>
-        </table>
-    </section>
 </main>

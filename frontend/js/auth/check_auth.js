@@ -1,32 +1,25 @@
-import { fetchAPI } from '/js/api.js';
+// frontend/js/auth/check_auth.js
+import { authService } from '/js/auth/authService.js';
 import { navigateTo } from '/js/router.js';
 
-let authStatusPromise = null;
-
-export function clearAuthStatusCache() {
-    authStatusPromise = null;
+// 외부에서 checkAuthStatus를 호출하던 기존 호환성을 위해 래핑[cite: 5]
+export async function checkAuthStatus(options) {
+    return await authService.verifySession(options);
 }
 
-export async function checkAuthStatus({ force = false } = {}) {
-    if (!force && authStatusPromise) {
-        return authStatusPromise;
-    }
-
-    authStatusPromise = fetchAPI('/users/me').catch(() => null);
-    return authStatusPromise;
-}
-
+// UI 및 라우팅 역할만 수행하도록 수정[cite: 5]
 async function logout() {
     try {
-        await fetchAPI('/users/logout', { method: 'POST' });
+        await authService.logout(); 
     } finally {
-        clearAuthStatusCache();
+        authService.clearAuthCache(); // 서비스 계층의 캐시 초기화
         alert("로그아웃 되었습니다.");
         await updateAuthUI(null);
         navigateTo('/');
     }
 }
 
+// 기존 DOM 조작 로직 유지 (의존성만 깔끔하게 정리됨)[cite: 5]
 export async function updateAuthUI(user = undefined) {
     const authMenu = document.getElementById('header-auth-nav');
     if (!authMenu) return;
@@ -38,7 +31,7 @@ export async function updateAuthUI(user = undefined) {
     if (user) {
         authMenu.innerHTML = `
             <a href="/mypage" class="user-link" data-link>
-                <strong>${user.user_id}</strong>님
+                <strong>${user.nickname}</strong>님
             </a>
             <button id="logout-btn" class="logout-btn">로그아웃</button>
         `;

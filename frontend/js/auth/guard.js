@@ -1,57 +1,46 @@
-import { fetchAPI } from '/js/api.js';
+// frontend/js/auth/guard.js
 
-const LOGIN_ALERT_COOLDOWN_MS = 1500;
+const LOGIN_ALERT_COOLDOWN_MS = 500; // 중복 알림 방지 쿨다운 시간[cite: 6]
 
-async function isPublicNavigationPath(path) {
-    try {
-        const menus = await fetchAPI('/menus/');
-        if (!Array.isArray(menus) || menus.length === 0) {
-            return false;
-        }
+let isAlertShowing = false; 
 
-        const activeMenus = menus.filter(menu => menu.use_yn === 'Y' && menu.role === 'ALL');
-        const tabsResults = await Promise.all(
-            activeMenus.map(menu => fetchAPI(`/tabs/?menu_id=${encodeURIComponent(menu.menu_id)}`))
-        );
+function showLoginRequiredAlertOnce() {
+    // 1. 이미 팝업이 화면에 떠 있다면 이후의 요청은 모두 무시
+    if (isAlertShowing) return; 
 
-        return tabsResults.some(tabs =>
-            Array.isArray(tabs) &&
-            tabs.some(tab => tab.use_yn === 'Y' && tab.role === 'ALL' && tab.href === path)
-        );
-    } catch (error) {
-        console.warn('[Auth Guard] Failed to check public menu/tab access:', error);
-        return false;
-    }
-}
-
-function showLoginRequiredAlertOnce(routeKey) {
     const now = Date.now();
-    const lastAlert = window.__parcLoginRequiredAlert || { routeKey: null, time: 0 };
+    const lastAlertTime = window.__parcLoginAlertTime || 0;
 
-    if (
-        lastAlert.routeKey === routeKey ||
-        now - lastAlert.time < LOGIN_ALERT_COOLDOWN_MS
-    ) {
+    // 2. 팝업이 닫힌 지 0.5초 이내라면 무시 (따닥 클릭 방지)
+    if (now - lastAlertTime < 500) {
         return;
     }
 
-    window.__parcLoginRequiredAlert = { routeKey, time: now };
+    isAlertShowing = true; // 팝업 잠금 활성화
     alert("로그인이 필요한 화면입니다.");
+    
+    // 🔥 3. 핵심: 사용자가 '확인'을 눌러 팝업이 닫힌 '직후'의 시간을 기록
+    window.__parcLoginAlertTime = Date.now(); 
+    isAlertShowing = false; // 팝업 잠금 해제
 }
 
+/**
+ * 라우터 진입 전 접근 권한을 검사합니다.
+ * 백엔드 권한과 무관하게 프론트엔드의 route.auth 설정을 절대적으로 따릅니다.
+ */
 export async function authGuard(route, user, routeKey = window.location.pathname, path = window.location.pathname) {
+    
+    // 1. 프론트엔드에서 auth: true로 설정했는데 유저가 없는 경우 -> 예외 없이 무조건 막음
     if (route.auth === true && !user) {
-        if (!route.requireLogin && await isPublicNavigationPath(path)) {
-            return null;
-        }
-
         showLoginRequiredAlertOnce(routeKey);
         return "/login";
     }
 
+    // 2. 로그인한 유저가 게스트 전용 페이지(로그인, 회원가입 등)에 접근한 경우 -> 메인으로 이동[cite: 6]
     if (route.auth === 'guest' && user) {
         return "/";
     }
 
+    // 3. 그 외의 경우는 모두 통과 (auth: false 등)[cite: 6]
     return null;
 }

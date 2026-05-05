@@ -1,6 +1,14 @@
 // frontend/js/api.js
 import { CONFIG } from '/js/config.js';
-import { navigateTo } from '/js/router.js';
+
+// 💡 추가된 부분: 인증 관련 커스텀 에러 클래스
+export class AuthError extends Error {
+    constructor(message, status = 401) {
+        super(message);
+        this.name = "AuthError";
+        this.status = status;
+    }
+}
 
 export async function fetchAPI(endpoint, options = {}) {
     const url = `${CONFIG.BASE_URL}${endpoint}`;
@@ -20,20 +28,19 @@ export async function fetchAPI(endpoint, options = {}) {
         // 🔥 수정된 부분: 401 에러 처리 로직
         if (response.status === 401) {
             // 만약 지금 요청한 주소가 '/login'을 포함하고 있다면?
-            if (endpoint.includes('/login')) {
-                // 세션 만료가 아니라 '로그인 실패(비번 틀림 등)'이므로 에러를 뱉어냅니다.
+            if (endpoint.includes(CONFIG.API_ENDPOINTS.LOGIN)) {
                 const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.detail || "아이디 또는 비밀번호가 올바르지 않습니다.");
+                throw new AuthError(errorData.detail || "아이디 또는 비밀번호가 올바르지 않습니다.");
             }
             
-            if (endpoint.includes('/users/me') || endpoint.includes('/logout') || endpoint.includes('/menus')) {
+            if (endpoint.includes(CONFIG.API_ENDPOINTS.USERS_ME) || 
+                endpoint.includes(CONFIG.API_ENDPOINTS.LOGOUT) || 
+                endpoint.includes(CONFIG.API_ENDPOINTS.MENUS)) {
                 return null; // 에러를 발생시키지 않고 빈 값을 돌려줍니다.
             }
             
-            // 로그인 이외의 통신에서 401이 나면 진짜 세션 만료!
-            alert("세션이 만료되었습니다. 다시 로그인해 주세요.");
-            navigateTo('/login');
-            return null; 
+            // 💡 수정됨: alert 창과 navigateTo를 제거하고, 에러를 던져서 호출부에서 처리하도록 위임[cite: 1]
+            throw new AuthError("SessionExpired");
         }
 
         const data = await response.json().catch(() => ({}));
@@ -41,11 +48,8 @@ export async function fetchAPI(endpoint, options = {}) {
         if (!response.ok) {
             let errorMessage = `서버 에러 발생: ${response.status}`;
             try {
-                // 백엔드에서 보내준 에러 JSON 데이터를 읽어옵니다.
-                const errorData = await response.json();
-                // FastAPI는 에러 메시지를 주로 'detail' 이라는 키워드에 담아 보냅니다.
-                if (errorData && errorData.detail) {
-                    errorMessage = errorData.detail;
+                if (data && data.detail) {
+                    errorMessage = data.detail; //[cite: 1]
                 }
             } catch (e) {
                 // JSON 파싱 실패 시 기본 에러 메시지 유지

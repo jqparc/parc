@@ -2,7 +2,7 @@
 import { navigateTo } from "/js/router.js";
 import { fetchAPI } from '/js/api.js';
 import { CONFIG } from '/js/config.js';
-import { clearAuthStatusCache } from '/js/auth/check_auth.js';
+import { authService } from '/js/auth/authService.js';
 
 const handleLoginSubmit = async (e) => {
     // 1. 브라우저의 기본 폼 제출(새로고침 및 URL 쿼리스트링 추가) 방지! ⭐ 가장 중요
@@ -37,7 +37,7 @@ const handleLoginSubmit = async (e) => {
         alert("로그인 성공! (API 통신 구현 전 임시 알림)");
         
         // 브라우저 주소를 메인('/')으로 바꾸고 화면을 다시 그립니다 (Step 3의 라우터 활용)
-        clearAuthStatusCache();
+        authService.clearAuthCache();
         navigateTo(CONFIG.PAGE_URL.INDEX);
         //navigateTo('/');
 

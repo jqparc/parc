@@ -8,5 +8,14 @@ export const CONFIG = {
         LOGIN: '/login',
         INDEX: '/',
         MYPAGE: '/mypage'
+    },
+
+    // 💡 추가된 부분: API 엔드포인트 상수화
+    API_ENDPOINTS: {
+        LOGIN: '/login',
+        LOGOUT: '/users/logout', // 실제 소스코드 기준
+        USERS_ME: '/users/me',   // 실제 소스코드 기준
+        MENUS: '/menus/',        // 실제 소스코드 기준
+        TABS: '/tabs/'
     }
 };

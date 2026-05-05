@@ -1,3 +1,4 @@
+// frontend/js/boards/economy-indicators.js
 import { fetchEconomySummaries, fetchEconomyHistory } from '/js/api/economy.js';
 import Chart from 'https://cdn.jsdelivr.net/npm/chart.js/auto/+esm';
 
@@ -20,7 +21,13 @@ const INDICATORS_CONFIG = {
 };
 
 let chartInstances = [];
-let initPromise = null;
+// 🔥 메모리 누수 방지용 플래그: 화면이 살아있는지 확인
+let isComponentActive = false; 
+
+const DOM = {
+    summaryContainer: () => document.getElementById('indicators-container'),
+    chartsContainer: () => document.getElementById('charts-container')
+};
 
 function destroyCharts() {
     chartInstances.forEach(chart => chart.destroy());
@@ -77,16 +84,14 @@ function renderSummaryTable(container, summaries) {
     `;
 }
 
-function renderSingleChart(container, history, symbol) {
+function renderSingleChart(wrapper, history, symbol) {
     const config = INDICATORS_CONFIG[symbol];
     if (!config) return;
 
-    const chartWrapper = document.createElement('div');
-    chartWrapper.className = 'chart-item';
-    chartWrapper.innerHTML = `<h3>${config.name} (${config.unit})</h3><canvas></canvas>`;
-    container.appendChild(chartWrapper);
+    // 미리 만들어둔 박스 안에 차트 캔버스 삽입
+    wrapper.innerHTML = `<h3>${config.name} (${config.unit})</h3><canvas></canvas>`;
 
-    const chart = new Chart(chartWrapper.querySelector('canvas').getContext('2d'), {
+    const chart = new Chart(wrapper.querySelector('canvas').getContext('2d'), {
         type: 'line',
         data: {
             labels: history.map(item => item.date),
@@ -102,27 +107,16 @@ function renderSingleChart(container, history, symbol) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
-            },
+            plugins: { legend: { display: false } },
             scales: {
                 x: {
-                    ticks: {
-                        font: { size: 9 },
-                        maxRotation: 0,
-                        autoSkip: true,
-                        maxTicksLimit: 6
-                    }
+                    ticks: { font: { size: 9 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 6 }
                 },
                 y: {
-                    afterFit(axis) {
-                        axis.width = 45;
-                    },
+                    afterFit(axis) { axis.width = 45; },
                     ticks: {
                         font: { size: 9 },
-                        callback(value) {
-                            return Number(value).toLocaleString();
-                        }
+                        callback(value) { return Number(value).toLocaleString(); }
                     }
                 }
             }
@@ -132,45 +126,81 @@ function renderSingleChart(container, history, symbol) {
     chartInstances.push(chart);
 }
 
-async function renderIndicators() {
-    const container = document.getElementById('indicators-container');
-    const gridContainer = document.getElementById('charts-container');
-    if (!container) return;
-
-    container.innerHTML = '<p class="loading">경제 지표 데이터를 불러오는 중입니다...</p>';
-
-    const summaries = await fetchEconomySummaries();
-    if (!summaries || summaries.length === 0) {
-        container.innerHTML = '<p>표시할 경제 지표 데이터가 없습니다.</p>';
-        return;
-    }
-
-    renderSummaryTable(container, summaries);
-
+// 🔥 병렬 차트 렌더링 로직
+async function loadAndRenderCharts() {
+    const gridContainer = DOM.chartsContainer();
     if (!gridContainer) return;
 
     destroyCharts();
     gridContainer.innerHTML = '';
 
+    // 1. INDICATORS_CONFIG에 정의된 '순서대로' 빈 박스(Placeholder)를 먼저 DOM에 그립니다.
+    const wrappers = {};
     for (const symbol of Object.keys(INDICATORS_CONFIG)) {
-        const history = await fetchEconomyHistory(symbol);
-        if (history && history.length > 0) {
-            renderSingleChart(gridContainer, history, symbol);
-        }
+        const wrapper = document.createElement('div');
+        wrapper.className = 'chart-item';
+        wrapper.innerHTML = `<div style="display:flex; justify-content:center; align-items:center; height:100%; color:#999; font-size:12px;">데이터 로딩 중...</div>`;
+        gridContainer.appendChild(wrapper);
+        wrappers[symbol] = wrapper; // 각 지표별 자기 자리를 기억해둡니다.
     }
+
+    // 2. 15개의 차트 데이터를 병렬(동시)에 요청합니다. (속도 유지)
+    const fetchPromises = Object.keys(INDICATORS_CONFIG).map(async (symbol) => {
+        try {
+            const history = await fetchEconomyHistory(symbol);
+            
+            // 데이터를 기다리는 동안 유저가 페이지를 나갔다면 중지
+            if (!isComponentActive) return;
+            
+            if (!history || history.length === 0) {
+                wrappers[symbol].innerHTML = `<div style="padding: 20px; text-align: center; color: #999;">데이터 없음</div>`;
+                return;
+            }
+            
+            // 3. 데이터가 도착하면, 순서에 상관없이 '자기 자리에 배정된 빈 박스' 안에 차트를 그립니다.
+            renderSingleChart(wrappers[symbol], history, symbol);
+        } catch (error) {
+            console.warn(`[Chart Load Error - ${symbol}]:`, error);
+            wrappers[symbol].innerHTML = `<div style="padding: 20px; text-align: center; color: #e74c3c;">로드 실패</div>`;
+        }
+    });
+
+    // 모든 비동기 작업이 끝날 때까지 대기
+    await Promise.allSettled(fetchPromises);
 }
 
-export function init() {
-    if (!initPromise) {
-        initPromise = renderIndicators().finally(() => {
-            initPromise = null;
-        });
+export async function init() {
+    isComponentActive = true; // 컴포넌트 활성화 플래그 ON
+
+    const container = DOM.summaryContainer();
+    if (container) {
+        container.innerHTML = '<p class="loading">경제 지표 데이터를 불러오는 중입니다...</p>';
     }
 
-    return initPromise;
+    try {
+        const summaries = await fetchEconomySummaries();
+        
+        // 통신이 끝났는데 유저가 다른 메뉴로 갔으면 렌더링 중단
+        if (!isComponentActive) return;
+
+        if (!summaries || summaries.length === 0) {
+            if (container) container.innerHTML = '<p>표시할 경제 지표 데이터가 없습니다.</p>';
+            return;
+        }
+
+        if (container) renderSummaryTable(container, summaries);
+
+        // 표를 먼저 보여주고, 아래쪽 차트들은 백그라운드에서 동시에 불러와서 그려줍니다.
+        await loadAndRenderCharts();
+
+    } catch (error) {
+        if (!isComponentActive) return;
+        console.error('Failed to load economy indicators:', error);
+        if (container) container.innerHTML = '<p>데이터를 불러오는 데 실패했습니다.</p>';
+    }
 }
 
 export function cleanup() {
-    destroyCharts();
-    initPromise = null;
+    isComponentActive = false; // 진행 중인 모든 비동기 렌더링 강제 종료
+    destroyCharts(); // 이미 그려진 Chart.js 인스턴스 소멸 및 캔버스 비우기
 }

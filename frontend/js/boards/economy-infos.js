@@ -1,11 +1,14 @@
+// frontend/js/boards/economy-infos.js
 import { fetchAPI } from '/js/api.js';
+import { authService } from '/js/auth/authService.js';
 import { navigateTo } from '/js/router.js';
-import { checkAuthStatus } from '/js/auth/check_auth.js';
 
 const BOARD_CODE = 'economy-info';
 const PAGE_SIZE = 10;
+let currentPage = 1;
 
 async function loadEconomyPosts(page = 1) {
+    currentPage = page;
     try {
         const data = await fetchAPI(`/boards/${BOARD_CODE}/posts?page=${page}&size=${PAGE_SIZE}`);
         renderTable(data.posts || [], data.current_page || page, data.total_count || 0);
@@ -26,17 +29,23 @@ async function setupWriteButton() {
     writeButton.hidden = true;
     writeButton.style.display = 'none';
 
-    const user = await checkAuthStatus();
+    // checkAuthStatus 대신 authService의 캐시된 세션 확인 메서드 사용
+    const user = await authService.verifySession();
     if (user?.role !== 'ADMIN') {
         return;
     }
 
     writeButton.hidden = false;
     writeButton.style.display = '';
-    writeButton.addEventListener('click', (event) => {
-        event.preventDefault();
-        navigateTo(writeButton.getAttribute('href'));
-    });
+    
+    // 이전에 등록된 이벤트 리스너가 중복 실행되지 않도록 처리
+    if (!writeButton.dataset.bound) {
+        writeButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            navigateTo(writeButton.getAttribute('href'));
+        });
+        writeButton.dataset.bound = "true";
+    }
 }
 
 function renderTable(posts, page, totalCount) {
@@ -81,15 +90,31 @@ function renderPagination(totalPages, currentPage) {
             </button>
         `;
     }).join('');
-
-    container.querySelectorAll('button[data-page]').forEach((button) => {
-        button.addEventListener('click', () => {
-            loadEconomyPosts(Number(button.dataset.page));
-        });
-    });
 }
 
-export function init() {
-    setupWriteButton();
-    loadEconomyPosts(1);
+// --- 💡 [이벤트 위임] 메모리 누수 및 중복 호출 방지 ---
+function handleBoardEvents(event) {
+    const button = event.target.closest('button[data-page]');
+    if (button) {
+        const page = Number(button.dataset.page);
+        if (page !== currentPage) {
+            loadEconomyPosts(page);
+        }
+    }
+}
+
+export async function init() {
+    // 1. 이벤트 리스너 위임 (컨테이너에 한 번만 등록하여 중복 이벤트 방지)
+    const container = document.querySelector('.table-container') || document.body;
+    container.addEventListener('click', handleBoardEvents);
+
+    // 2. 권한 체크 및 데이터 로드 순차 실행
+    await setupWriteButton();
+    await loadEconomyPosts(1);
+}
+
+export function cleanup() {
+    // SPA 라우터가 다른 화면으로 넘어갈 때 이벤트 리스너를 제거하여 메모리 최적화
+    const container = document.querySelector('.table-container') || document.body;
+    container.removeEventListener('click', handleBoardEvents);
 }
