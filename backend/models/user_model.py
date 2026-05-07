@@ -36,3 +36,4 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     posts = relationship("Post", back_populates="author")
+    calendar_events = relationship("CalendarEvent", back_populates="owner", cascade="all, delete-orphan")

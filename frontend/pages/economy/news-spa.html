@@ -1,0 +1,20 @@
+<link rel="stylesheet" href="/css/economic-news.css">
+
+<section class="news-page">
+    <header class="news-toolbar">
+        <div>
+            <p class="news-kicker">경제 뉴스</p>
+            <h2>최신 경제 뉴스</h2>
+        </div>
+        <select id="news-category-filter" aria-label="뉴스 카테고리">
+            <option value="all">전체</option>
+        </select>
+    </header>
+
+    <section id="news-list-view" class="news-list-view">
+        <div id="news-card-grid" class="news-card-grid"></div>
+        <button id="news-load-more" class="news-load-more" type="button" hidden>더 보기</button>
+    </section>
+
+    <article id="news-detail-view" class="news-detail-view" hidden></article>
+</section>

@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 # 🔥 경로가 api.v1.endpoints 로 변경되었습니다.
-from api.v1.endpoints import users, posts, menus, tabs, economy, assets
+from api.v1.endpoints import users, posts, menus, tabs, economy, assets, calendar, economic_news, chat
 
 api_v1_router = APIRouter()
 
@@ -9,4 +9,7 @@ api_v1_router.include_router(menus.router, prefix="/menus", tags=["Menus"])
 api_v1_router.include_router(tabs.router, prefix="/tabs" , tags=["Tabs" ])
 api_v1_router.include_router(economy.router, prefix="/economy" , tags=["Economy" ])
 api_v1_router.include_router(assets.router, prefix="/assets" , tags=["Assets" ])
+api_v1_router.include_router(calendar.router, prefix="/calendar", tags=["Calendar"])
+api_v1_router.include_router(economic_news.router, prefix="/economic-news", tags=["Economic News"])
+api_v1_router.include_router(chat.router, tags=["Chat"])
 api_v1_router.include_router(posts.router, tags=["Posts"])

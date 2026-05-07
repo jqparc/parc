@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, Response
+from fastapi import APIRouter, Depends, status, Response, HTTPException
 from schemas.user_schema import (
     PasswordChange,
     PasswordVerify,
@@ -12,9 +12,22 @@ from models.user_model import User # 모델 추가
 # 🔥 의존성을 전용 폴더에서 가져옵니다.
 from api.v1.dependencies.service_deps import get_user_service 
 from api.v1.dependencies.auth_deps import get_current_user
+from core.config import settings
+from core.security import create_access_token
 
 
 router = APIRouter()
+
+
+def set_access_token_cookie(response: Response, access_token: str) -> None:
+    response.set_cookie(
+        key="access_token",
+        value=f"Bearer {access_token}",
+        httponly=True,
+        max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        samesite="lax",
+        secure=False
+    )
 
 @router.post("/signup", status_code=status.HTTP_201_CREATED)
 def signup(
@@ -58,18 +71,20 @@ def login(
     # 1. 서비스 레이어에서 비즈니스 로직(토큰 발급) 처리
     result = service.login_user(login_data)
 
-    # 2. HttpOnly 쿠키 설정 (보안 강화: JS에서 토큰 탈취 방지)
-    # 이전 단계(auth_deps.py)에서 쿠키와 헤더 모두에서 토큰을 읽도록 설계했으므로 완벽히 호환됩니다.
-    response.set_cookie(
-        key="access_token",
-        value=f"Bearer {result['access_token']}",
-        httponly=True,  # 자바스크립트로 쿠키에 접근하는 것을 차단 (XSS 방어)
-        max_age=1800,   # 30분 (1800초)
-        samesite="lax", # CSRF 공격 완화
-        secure=False    # 로컬 개발용(HTTP)이므로 False, 운영(HTTPS) 배포 시 True로 변경
-    )
+    set_access_token_cookie(response, result["access_token"])
 
     return result
+
+
+@router.post("/refresh")
+def refresh_session(
+    response: Response,
+    current_user: User = Depends(get_current_user),
+):
+    access_token = create_access_token(data={"sub": current_user.user_id})
+    set_access_token_cookie(response, access_token)
+    return {"success": True}
+
 
 @router.post("/logout")
 def logout(response: Response):
@@ -77,13 +92,67 @@ def logout(response: Response):
     response.delete_cookie("access_token")
     return {"success": True, "message": "성공적으로 로그아웃 되었습니다."}
 
+@router.patch("/me", response_model=UserResponse)
+def update_my_profile(
+    update_data: UserUpdate,
+    current_user: User = Depends(get_current_user),
+    service: UserService = Depends(get_user_service)
+):
+    """
+    내 개인정보를 수정합니다. 
+    보안을 위해 비밀번호 확인 절차에서 발급된 verification_token이 필수입니다.
+    """
+    # 1. 보안 검증: 수정 요청 시 verification_token이 있는지 확인
+    if not update_data.verification_token:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="개인정보 수정을 위해 비밀번호 확인이 필요합니다."
+        )
+
+    # 2. 토큰 유효성 및 소유권 검증
+    record = service.get_verification_record(update_data.verification_token)
+    if not record or record.owner_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail="유효한 인증 기록을 찾을 수 없습니다."
+        )
+    
+    if record.is_expired():
+        raise HTTPException(status_code=400, detail="인증 시간이 만료되었습니다. 다시 시도해 주세요.")
+    
+    if record.is_used:
+        raise HTTPException(status_code=400, detail="이미 사용된 인증 토큰입니다.")
+
+    # 3. 실제 수정 프로세스 진행
+    updated_user = service.update_profile(current_user, update_data)
+    
+    # 4. 보안 완료: 사용된 토큰을 즉시 '사용됨' 처리하여 재사용 방지
+    service.mark_token_as_used(record)
+    
+    return updated_user
+
 @router.put("/me/password")
 def change_my_password(
     pw_data: PasswordChange,
     current_user: User = Depends(get_current_user),
     service: UserService = Depends(get_user_service)
 ):
-    return service.change_password(current_user, pw_data)
+    # (기존의 토큰 검증 로직 유지 혹은 공통 함수로 호출)
+    record = service.get_verification_record(pw_data.verification_token)
+    
+    if not record or record.owner_id != current_user.id:
+        raise HTTPException(status_code=404, detail="인증 기록을 찾을 수 없습니다.")
+    
+    if record.is_expired() or record.is_used:
+        raise HTTPException(status_code=400, detail="유효하지 않거나 만료된 토큰입니다.")
+
+    # 비밀번호 업데이트
+    service.update_password(current_user, pw_data.new_password)
+    
+    # 토큰 사용 완료 처리
+    service.mark_token_as_used(record)
+    
+    return {"success": True, "message": "비밀번호가 성공적으로 변경되었습니다."}
 
 
 @router.post("/me/password/verify")

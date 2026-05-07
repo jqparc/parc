@@ -2,6 +2,11 @@
 import { injectGlobalStyles, loadComponent } from '/js/utils/loader.js';
 import { AuthError } from '/js/api.js';
 import { navigateTo } from '/js/router.js';
+import { authService } from '/js/auth/authService.js';
+
+const SESSION_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+let lastSessionRefreshAt = 0;
+let refreshInProgress = false;
 
 window.addEventListener('unhandledrejection', (event) => {
     if (event.reason instanceof AuthError) {
@@ -9,6 +14,28 @@ window.addEventListener('unhandledrejection', (event) => {
         navigateTo('/login');
     }
 });
+
+async function refreshSessionOnActivity() {
+    const now = Date.now();
+    if (refreshInProgress || now - lastSessionRefreshAt < SESSION_REFRESH_INTERVAL_MS) return;
+
+    refreshInProgress = true;
+    try {
+        await authService.refreshSession();
+        lastSessionRefreshAt = now;
+    } catch {
+        authService.clearAuthCache();
+    } finally {
+        refreshInProgress = false;
+    }
+}
+
+function bindSessionKeepAlive() {
+    const activityEvents = ['click', 'keydown', 'scroll', 'mousemove', 'touchstart'];
+    activityEvents.forEach(eventName => {
+        window.addEventListener(eventName, refreshSessionOnActivity, { passive: true });
+    });
+}
 
 /**
  * 앱의 기본 레이아웃(헤더, 네비게이션 등)을 초기화합니다.[cite: 3]
@@ -32,6 +59,8 @@ async function initializeApp() {
         '/components/navigation.html',
         null
     );
+
+    bindSessionKeepAlive();
 
     // 3. 레이아웃 준비 완료 이벤트 발생 -> 라우터가 이를 받아 첫 페이지를 렌더링함[cite: 3, 4]
     document.dispatchEvent(new Event("layoutLoaded"));

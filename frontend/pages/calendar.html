@@ -1,0 +1,45 @@
+<link rel="stylesheet" href="/css/calendar.css">
+
+<section class="calendar-page">
+    <div class="calendar-shell">
+        <section class="calendar-panel" aria-label="경제 일정 캘린더">
+            <div id="calendar"></div>
+        </section>
+
+        <aside class="calendar-detail" aria-label="선택 날짜 상세">
+            <div class="detail-header">
+                <div>
+                    <p class="detail-kicker">선택 날짜</p>
+                    <h2 id="selected-date-title">오늘</h2>
+                </div>
+                <span id="selected-event-count" class="event-count">0개</span>
+            </div>
+
+            <form id="calendar-form" class="calendar-form">
+                <label>
+                    <span>일정명</span>
+                    <input id="event-title" type="text" maxlength="120" placeholder="예: 미국 CPI 발표" required>
+                </label>
+                <div class="form-row">
+                    <label>
+                        <span>날짜</span>
+                        <input id="event-date" type="date" required>
+                    </label>
+                    <label>
+                        <span>색상</span>
+                        <input id="event-color" type="color" value="#ef4444" aria-label="일정 색상">
+                    </label>
+                </div>
+                <div class="form-actions">
+                    <button id="event-submit-button" type="submit">일정 추가</button>
+                    <button id="event-cancel-button" type="button" class="secondary-action" hidden>취소</button>
+                </div>
+            </form>
+
+            <div class="detail-list-wrap">
+                <h3>상세 일정</h3>
+                <ul id="selected-event-list" class="event-list"></ul>
+            </div>
+        </aside>
+    </div>
+</section>

@@ -4,6 +4,17 @@ class Settings(BaseSettings):
     SECRET_KEY: str 
     ALGORITHM: str 
     DATABASE_URL: str 
+    NEWSAPI_API_KEY: str | None = None
+    NEWSAPI_COUNTRY: str = "us"
+    NEWSAPI_CATEGORIES: str = "business"
+    NEWSAPI_PAGE_SIZE: int = 50
+    NEWS_COLLECTION_INTERVAL_MINUTES: int = 10
+    OPEN_API_KEY: str | None = None
+    OPENAI_API_KEY: str | None = None
+    OPENAI_MODEL: str = "gpt-5.2"
+    GEMINI_API_KEY: str | None = None
+    GEMINI_MODEL: str = "gemini-2.5-flash"
+    GEMINI_BASE_URL: str = "https://generativelanguage.googleapis.com/v1beta/openai/"
     
     # 새로 추가된 속성
     ACCESS_TOKEN_EXPIRE_MINUTES: int

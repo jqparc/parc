@@ -18,6 +18,7 @@ backend/.venv/
 .idea/
 
 # Environments
+*.env
 backend/.env
 backend/.venv
 backend/env/

@@ -15,6 +15,7 @@ export const CONFIG = {
         LOGIN: '/login',
         LOGOUT: '/users/logout', // 실제 소스코드 기준
         USERS_ME: '/users/me',   // 실제 소스코드 기준
+        USERS_REFRESH: '/users/refresh',
         MENUS: '/menus/',        // 실제 소스코드 기준
         TABS: '/tabs/'
     }

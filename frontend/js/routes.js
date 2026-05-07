@@ -2,8 +2,13 @@
 
 export const routes = {
     "/": {
-        html: "/index.html",
-        js: null,
+        html: "/pages/calendar.html",
+        js: "/js/calendar.js",
+        auth: false
+    },
+    "/calendar": {
+        html: "/pages/calendar.html",
+        js: "/js/calendar.js",
         auth: false
     },
     "/login": {
@@ -31,6 +36,11 @@ export const routes = {
         js: "/js/auth/menu.js",
         auth: true
     },
+    "/dev/gpt": {
+        html: "/pages/dev/chat.html",
+        js: "/js/chat.js",
+        auth: false
+    },
     "/change-password": {
         html: "/pages/auth/change-password.html",
         js: "/js/auth/change-password.js",
@@ -44,6 +54,11 @@ export const routes = {
     "/economy/indicators": {
         html: "/pages/economy/indicators.html",
         js: "/js/boards/economy-indicators.js",
+        auth: false
+    },
+    "/economy/news": {
+        html: "/pages/economy/news-spa.html",
+        js: "/js/economic-news.js",
         auth: false
     },
     "/asset/portfolio": {
@@ -72,5 +87,9 @@ export const dynamicRoutes = [
     {
         pattern: /^\/economy\/infos\/\d+$/,
         route: { html: "/pages/boards/detail.html", js: "/js/boards/post-detail.js", auth: false }
+    },
+    {
+        pattern: /^\/economy\/news\/\d+$/,
+        route: { html: "/pages/economy/news-spa.html", js: "/js/economic-news.js", auth: false }
     }
 ];

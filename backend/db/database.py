@@ -9,9 +9,11 @@ from core.config import settings
 # SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./parc.db")
 
 # 2. 파이썬과 DB를 연결해주는 '엔진(통신 케이블)'
+connect_args = {"check_same_thread": False} if settings.DATABASE_URL.startswith("sqlite") else {}
+
 engine = create_engine(
-    settings.DATABASE_URL, 
-    connect_args={"check_same_thread": False}
+    settings.DATABASE_URL,
+    connect_args=connect_args
 )
 
 # 3. DB에 접속하는 '세션(출입증)' 만들기
