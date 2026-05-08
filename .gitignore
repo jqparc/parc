@@ -1,0 +1,34 @@
+# Python 관련 쓰레기 파일들
+**/__pycache__/
+*.py[cod]
+*$py.class
+junq/
+.junq/
+
+# 데이터베이스 (개인 데이터가 들어있으므로 올리지 않음)
+backend/*.db
+backend/*.sqlite3
+
+# 가상환경
+backend/venv/
+backend/.venv/
+
+# 기타 설정 파일
+.vscode/
+.idea/
+
+# Environments
+*.env
+backend/.env
+backend/.venv
+backend/env/
+backend/venv/
+backend/ENV/
+
+# Alembic
+backend/alembic/__pycache__/
+
+# Frontend (Live Server 및 OS 관련)
+frontend/.vscode/
+frontend/.DS_Store
+frontend/Thumbs.db
