@@ -5,6 +5,17 @@ from typing import Literal, Optional
 from pydantic import AliasChoices, BaseModel, ConfigDict, Field
 
 
+class AssetCommonCodeResponse(BaseModel):
+    dtl_code: str
+    dtl_code_name: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class AssetCommonCodeSaveRequest(BaseModel):
+    codes: list[AssetCommonCodeResponse]
+
+
 class StockTradeBase(BaseModel):
     proc_date: date
     itms_code: str = Field(..., min_length=1, max_length=20)
@@ -70,6 +81,11 @@ class StockItemResponse(StockItemBase):
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class StockItemSearchResponse(StockItemResponse):
+    shtg_name: Optional[str] = None
+    bzty_name: Optional[str] = None
 
 
 class StockMasterBase(BaseModel):

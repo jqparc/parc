@@ -1,17 +1,19 @@
 from datetime import date
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, aliased
 
 from api.v1.dependencies.auth_deps import get_current_user
 from db.database import get_db
 from models.assets import StockItem, StockMaster, StockTrade
+from models.common_code_model import CommonCode
 from models.user_model import User
 from schemas.asset_schema import (
     StockItemCreate,
     StockItemResponse,
+    StockItemSearchResponse,
     StockItemUpdate,
     StockMasterGenerateRequest,
 )
@@ -55,6 +57,21 @@ def build_stock_item_response(item: StockItem) -> StockItemResponse:
         "updated_at": item.updated_at,
     }
     return StockItemResponse(**data)
+
+
+def build_stock_item_search_response(
+    item: StockItem,
+    shtg_name: str | None = None,
+    bzty_name: str | None = None,
+) -> StockItemSearchResponse:
+    data = build_stock_item_response(item).model_dump()
+    data.update(
+        {
+            "shtg_name": shtg_name,
+            "bzty_name": bzty_name,
+        }
+    )
+    return StockItemSearchResponse(**data)
 
 
 def apply_stock_item_data(item: StockItem, data: dict) -> None:
@@ -127,6 +144,45 @@ def generate_stock_items_for_date(db: Session, user_id: int, proc_date: date) ->
 def get_stock_items(db: Session = Depends(get_db)):
     items = db.query(StockItem).order_by(StockItem.proc_date.desc(), StockItem.itms_code.asc()).all()
     return [build_stock_item_response(item) for item in items]
+
+
+@router.get("/stock-items/search", response_model=List[StockItemSearchResponse])
+def search_stock_items(
+    from_date: date | None = Query(default=None),
+    to_date: date | None = Query(default=None),
+    itms_code: str | None = Query(default=None),
+    db: Session = Depends(get_db),
+):
+    market_code = aliased(CommonCode)
+    business_type_code = aliased(CommonCode)
+
+    query = (
+        db.query(
+            StockItem,
+            market_code.dtl_code_name.label("shtg_name"),
+            business_type_code.dtl_code_name.label("bzty_name"),
+        )
+        .outerjoin(
+            market_code,
+            market_code.srch_gpcd.in_(["SHTG_DNCD", "shtg_dncd"])
+            & (market_code.dtl_code == StockItem.shtg_code),
+        )
+        .outerjoin(
+            business_type_code,
+            business_type_code.srch_gpcd.in_(["BZTY_CODE", "BZTY_DNCD", "bzty_code"])
+            & (business_type_code.dtl_code == StockItem.bzty_code),
+        )
+    )
+
+    if from_date:
+        query = query.filter(StockItem.proc_date >= from_date)
+    if to_date:
+        query = query.filter(StockItem.proc_date <= to_date)
+    if itms_code and itms_code != "전체":
+        query = query.filter(StockItem.itms_code == itms_code)
+
+    rows = query.order_by(StockItem.proc_date.desc(), StockItem.itms_code.asc()).all()
+    return [build_stock_item_search_response(item, shtg_name, bzty_name) for item, shtg_name, bzty_name in rows]
 
 
 @router.post("/stock-items", response_model=StockItemResponse, status_code=status.HTTP_201_CREATED)

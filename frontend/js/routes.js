@@ -66,6 +66,21 @@ export const routes = {
         js: null, 
         auth: false
     },
+    "/asset/setting": {
+        html: "/pages/asset/setting.html",
+        js: null,
+        auth: true
+    },
+    "/asset/setting/stck-items": {
+        html: "/pages/asset/setting-stck-items.html",
+        js: "/js/asset/setting-stck-items.js",
+        auth: true
+    },
+    "/asset/setting/business-types": {
+        html: "/pages/asset/setting-business-types.html",
+        js: "/js/asset/setting-business-types.js",
+        auth: true
+    },
     "/asset/stck": {
         html: "/pages/asset/stck.html",
         js: "/js/asset/stck.js",

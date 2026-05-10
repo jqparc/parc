@@ -252,6 +252,199 @@
     opacity: 0.6;
 }
 
+.asset-setting-page {
+    background: #f8fafc;
+}
+
+.asset-setting-section {
+    gap: 14px;
+}
+
+.asset-setting-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    min-width: 0;
+}
+
+.asset-setting-row {
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr);
+    align-items: stretch;
+    min-width: 0;
+    border: 1px solid #d9dee8;
+    border-radius: 6px;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.asset-setting-row-header {
+    display: flex;
+    align-items: center;
+    padding: 14px;
+    border-right: 1px solid #e2e8f0;
+    background: #eef2f7;
+}
+
+.asset-setting-row-header h3 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 16px;
+}
+
+.asset-setting-button-scroll {
+    display: flex;
+    gap: 8px;
+    min-width: 0;
+    padding: 12px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+}
+
+.asset-setting-button {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 132px;
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid #1d4ed8;
+    border-radius: 4px;
+    background: #2563eb;
+    color: #ffffff;
+    font-weight: 800;
+    text-align: center;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+.asset-setting-button:hover {
+    background: #1d4ed8;
+}
+
+.asset-setting-button-title {
+    overflow-wrap: anywhere;
+}
+
+.asset-setting-search-panel {
+    display: grid;
+    grid-template-columns: minmax(140px, 180px) minmax(140px, 180px) minmax(160px, 220px) auto;
+    gap: 8px;
+    align-items: end;
+    padding: 10px;
+    border: 1px solid #d9dee8;
+    border-radius: 6px;
+    background: #ffffff;
+}
+
+.asset-setting-search-panel label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.asset-setting-search-panel input {
+    min-height: 34px;
+    padding: 6px 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    background: #ffffff;
+    box-sizing: border-box;
+}
+
+.asset-setting-search-panel button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 4px;
+    background: #2563eb;
+    color: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.asset-setting-stock-item-table {
+    min-width: 1180px;
+}
+
+.asset-setting-business-type-table {
+    max-width: 560px;
+}
+
+.asset-setting-business-type-table th:first-child,
+.asset-setting-business-type-table td:first-child {
+    width: 44px;
+    text-align: center;
+}
+
+.asset-setting-table-toolbar {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.asset-setting-table-toolbar button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 4px;
+    background: #2563eb;
+    color: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.asset-setting-table-toolbar button:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+.asset-setting-business-type-row-toolbar {
+    justify-content: flex-end;
+}
+
+.asset-setting-business-type-row-toolbar button:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+.asset-setting-editable-cell {
+    cursor: text;
+}
+
+.asset-setting-editable-cell:hover {
+    background: #eff6ff;
+}
+
+.asset-setting-dirty-row td {
+    background: #fff7ed;
+}
+
+.asset-setting-dirty-row .asset-setting-editable-cell:hover {
+    background: #ffedd5;
+}
+
+.asset-setting-cell-input {
+    width: 100%;
+    min-width: 96px;
+    min-height: 30px;
+    padding: 4px 6px;
+    border: 1px solid #2563eb;
+    border-radius: 4px;
+    background: #ffffff;
+    box-sizing: border-box;
+    font: inherit;
+}
+
 @media (max-width: 900px) {
     .stock-form {
         grid-template-columns: 1fr 1fr;
@@ -310,5 +503,22 @@
 
     .stock-grid-toolbar button {
         flex: 1;
+    }
+
+    .asset-setting-row {
+        grid-template-columns: 1fr;
+    }
+
+    .asset-setting-row-header {
+        border-right: 0;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .asset-setting-search-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .asset-setting-table-toolbar button {
+        width: 100%;
     }
 }

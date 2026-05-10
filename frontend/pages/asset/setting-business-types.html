@@ -1,0 +1,39 @@
+<main class="main-container stock-page asset-setting-page">
+    <section class="stock-section asset-setting-section">
+        <div class="stock-list-header">
+            <div>
+                <h2>국내주식 업종관리</h2>
+                <div class="stock-summary" id="setting-business-type-summary"></div>
+            </div>
+            <div class="stock-actions">
+                <a href="/asset/setting" class="stock-back-link" data-link>설정</a>
+            </div>
+        </div>
+
+        <p id="setting-business-type-error" class="stock-error" hidden></p>
+
+        <div class="asset-setting-table-toolbar asset-setting-business-type-toolbar">
+            <button type="button" id="setting-business-type-save-button" disabled>저장</button>
+        </div>
+        <div class="stock-grid-toolbar asset-setting-business-type-row-toolbar">
+            <button type="button" id="setting-business-type-add-button">행 추가</button>
+            <button type="button" id="setting-business-type-copy-button">복사</button>
+            <button type="button" id="setting-business-type-delete-button">삭제</button>
+        </div>
+
+        <div class="stock-table-wrap">
+            <table class="common-table stock-table asset-setting-business-type-table">
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="setting-business-type-check-all" aria-label="전체 선택">
+                        </th>
+                        <th>업종코드</th>
+                        <th>업종명</th>
+                    </tr>
+                </thead>
+                <tbody id="setting-business-type-list"></tbody>
+            </table>
+        </div>
+    </section>
+</main>
