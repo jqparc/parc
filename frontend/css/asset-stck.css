@@ -1,19 +1,28 @@
 .stock-page {
     gap: 18px;
     padding: 16px;
+    box-sizing: border-box;
+    max-width: 100%;
+    min-width: 0;
+    width: 100%;
 }
 
 .stock-section {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    min-width: 0;
 }
 
 .stock-form {
     display: grid;
-    grid-template-columns: repeat(4, minmax(140px, 1fr));
+    grid-template-columns: repeat(4, minmax(140px, 1fr)) auto;
     gap: 10px;
     align-items: end;
+}
+
+.stock-form-add {
+    max-width: 820px;
 }
 
 .stock-form label {
@@ -39,7 +48,12 @@
 }
 
 .stock-form button,
-.stock-delete-btn {
+.stock-add-link,
+.stock-back-link,
+.stock-danger-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     min-height: 34px;
     padding: 0 12px;
     border: 0;
@@ -48,10 +62,79 @@
     color: #ffffff;
     font-weight: 700;
     cursor: pointer;
+    text-decoration: none;
 }
 
-.stock-delete-btn {
+.stock-back-link {
     background: #64748b;
+}
+
+.stock-danger-button {
+    background: #dc2626;
+}
+
+.stock-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.stock-header-actions {
+    align-items: flex-end;
+}
+
+.stock-generate-form {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+}
+
+.stock-generate-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.stock-generate-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.stock-generate-form input {
+    min-height: 34px;
+    padding: 6px 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    background: #ffffff;
+    box-sizing: border-box;
+}
+
+.stock-generate-form button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 4px;
+    background: #0f766e;
+    color: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.stock-generate-form button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.stock-status {
+    margin: 0;
+    color: #0f766e;
+    font-weight: 700;
 }
 
 .stock-list-header {
@@ -59,6 +142,10 @@
     justify-content: space-between;
     gap: 12px;
     align-items: center;
+}
+
+.stock-list-header h2 {
+    margin: 0;
 }
 
 .stock-summary {
@@ -70,49 +157,108 @@
     font-weight: 700;
 }
 
-.stock-table-wrap {
-    overflow-x: auto;
-}
-
-.stock-table {
-    min-width: 1100px;
-}
-
-.stock-table th,
-.stock-table td {
-    padding: 8px;
-    border-bottom: 1px solid #d9dee8;
-}
-
-.stock-name-cell {
-    text-align: left;
-}
-
-.stock-name-cell small {
-    display: block;
-}
-
-.stock-memo-cell {
-    max-width: 220px;
-    text-align: left;
-}
-
-.stock-profit-plus {
-    color: #dc2626;
-}
-
-.stock-profit-minus {
-    color: #2563eb;
-}
-
 .stock-error {
     color: #dc2626;
     font-weight: 700;
 }
 
+.stock-item-detail-page {
+    display: grid;
+    grid-template-rows: auto minmax(260px, 1fr) minmax(260px, 1fr);
+    min-width: 0;
+}
+
+.stock-half-section {
+    min-height: 260px;
+    min-width: 0;
+}
+
+.stock-section-title h3 {
+    margin: 0;
+}
+
+.stock-range-panel {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    padding: 10px;
+    border: 1px solid #d9dee8;
+    border-radius: 6px;
+    background: #f8fafc;
+}
+
+.stock-range-panel label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.stock-range-panel input {
+    min-height: 34px;
+    padding: 6px 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    background: #ffffff;
+    box-sizing: border-box;
+}
+
+.stock-range-panel button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 4px;
+    background: #2563eb;
+    color: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.stock-trade-grid-page {
+    min-width: 0;
+}
+
+.stock-trade-query-panel {
+    justify-content: flex-start;
+}
+
+.stock-grid-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.stock-grid-toolbar button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 4px;
+    background: #475569;
+    color: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.stock-grid-toolbar button:disabled,
+.stock-add-link:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
 @media (max-width: 900px) {
     .stock-form {
         grid-template-columns: 1fr 1fr;
+    }
+
+    .stock-form button {
+        grid-column: span 2;
     }
 
     .stock-form-wide {
@@ -122,5 +268,47 @@
     .stock-list-header {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    .stock-add-link,
+    .stock-back-link,
+    .stock-danger-button {
+        width: 100%;
+    }
+
+    .stock-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .stock-generate-form {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .stock-generate-form button {
+        width: 100%;
+    }
+
+    .stock-generate-buttons {
+        width: 100%;
+    }
+
+    .stock-range-panel {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .stock-range-panel button {
+        width: 100%;
+    }
+
+    .stock-grid-toolbar {
+        width: 100%;
+    }
+
+    .stock-grid-toolbar button {
+        flex: 1;
     }
 }

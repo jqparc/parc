@@ -71,6 +71,11 @@ export const routes = {
         js: "/js/asset/stck.js",
         auth: true
     },
+    "/asset/stck/add": {
+        html: "/pages/asset/stck-add.html",
+        js: "/js/asset/stck-add.js",
+        auth: true
+    },
     "/boards/write": {
         html: "/pages/boards/write.html",
         js: "/js/boards/post-write.js", // 필요하면
@@ -91,5 +96,17 @@ export const dynamicRoutes = [
     {
         pattern: /^\/economy\/news\/\d+$/,
         route: { html: "/pages/economy/news-spa.html", js: "/js/economic-news.js", auth: false }
+    },
+    {
+        pattern: /^\/asset\/stck\/item\/[^/]+$/,
+        route: { html: "/pages/asset/stck-item-detail.html", js: "/js/asset/stck-item-detail.js", auth: true }
+    },
+    {
+        pattern: /^\/asset\/stck\/[^/]+\/edit$/,
+        route: { html: "/pages/asset/stck-edit.html", js: "/js/asset/stck-edit.js", auth: true }
+    },
+    {
+        pattern: /^\/asset\/stck\/[^/]+$/,
+        route: { html: "/pages/asset/stck-detail.html", js: "/js/asset/stck-detail.js", auth: true }
     }
 ];

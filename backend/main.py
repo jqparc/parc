@@ -13,14 +13,16 @@ from services.news_scheduler import start_news_scheduler, stop_news_scheduler
 Base.metadata.create_all(bind=engine)
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    start_news_scheduler()
-    yield
-    stop_news_scheduler()
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     start_news_scheduler()
+#     yield
+#     stop_news_scheduler()
 
 
-app = FastAPI(title="Parc API Server", lifespan=lifespan)
+# app = FastAPI(title="Parc API Server", lifespan=lifespan)
+
+app = FastAPI(title="Parc API Server")
 
 # 1. CORS 미들웨어 적용
 add_cors_middleware(app)

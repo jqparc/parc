@@ -1,0 +1,16 @@
+class StockTrade(Base):
+    __tablename__ = "stck_tr"
+
+user_id         사용자        PK
+proc_date       처리일        PK
+itms_code       종목코드      PK
+trns_code       거래구분      PK ('B' / 'S')
+seq             순번          PK
+
+qnty            수량
+prc             거래단가
+
+created_at      생성시기
+updated_at      수정시기
+
+user = relationship("User")

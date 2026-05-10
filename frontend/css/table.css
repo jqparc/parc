@@ -127,3 +127,111 @@
     color: #667085;
     text-align: center;
 }
+
+.stock-table-wrap {
+    max-width: 100%;
+    overflow-x: auto;
+    width: 100%;
+}
+
+.stock-table {
+    min-width: 720px;
+}
+
+.stock-holding-table {
+    min-width: 860px;
+}
+
+.stock-lot-table {
+    min-width: 1180px;
+}
+
+.stock-holding-history-table,
+.stock-trade-history-table {
+    min-width: 1320px;
+}
+
+.stock-trade-edit-table {
+    min-width: 980px;
+}
+
+.stock-table th,
+.stock-table td {
+    padding: 8px;
+    border-bottom: 1px solid #d9dee8;
+}
+
+.stock-row {
+    cursor: pointer;
+}
+
+.stock-row:hover {
+    background: #f8fafc;
+}
+
+.stock-name-cell {
+    text-align: left;
+}
+
+.stock-name-cell small {
+    display: block;
+}
+
+.stock-memo-cell {
+    max-width: 220px;
+    text-align: left;
+}
+
+.stock-item-link {
+    color: inherit;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 2px;
+    text-decoration: none;
+}
+
+.stock-item-link:hover strong {
+    color: #2563eb;
+    text-decoration: underline;
+}
+
+.stock-profit-plus {
+    color: #dc2626;
+}
+
+.stock-profit-minus {
+    color: #2563eb;
+}
+
+.stock-row-actions {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+}
+
+.stock-row-actions .stock-back-link,
+.stock-row-actions .stock-danger-button {
+    min-height: 30px;
+    padding: 0 10px;
+}
+
+.stock-trade-edit-table th:first-child,
+.stock-trade-edit-table td:first-child {
+    width: 42px;
+}
+
+.stock-trade-edit-table input,
+.stock-trade-edit-table select {
+    min-height: 32px;
+    width: 100%;
+    padding: 5px 7px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    background: #ffffff;
+    box-sizing: border-box;
+}
+
+.stock-trade-edit-table input[type="checkbox"] {
+    min-height: auto;
+    width: auto;
+}

@@ -13,6 +13,7 @@ from models.economic_news_model import EconomicNews
 
 
 NEWSAPI_TOP_HEADLINES_URL = "https://newsapi.org/v2/top-headlines"
+NEWSAPI_EVERYTHING_URL = "https://newsapi.org/v2/everything"
 
 
 def parse_newsapi_datetime(value: str | None) -> datetime:
@@ -27,6 +28,37 @@ def configured_categories() -> list[str]:
         for category in settings.NEWSAPI_CATEGORIES.split(",")
         if category.strip()
     ] or ["business"]
+
+
+def is_newsapi_configured() -> bool:
+    return bool(settings.NEWSAPI_API_KEY)
+
+
+def fetch_newsapi_everything_articles() -> list[dict]:
+    query = (settings.NEWSAPI_QUERY or "").strip()
+    if not settings.NEWSAPI_API_KEY or not query:
+        return []
+
+    params = {
+        "q": query,
+        "sortBy": "publishedAt",
+        "pageSize": settings.NEWSAPI_PAGE_SIZE,
+    }
+    url = f"{NEWSAPI_EVERYTHING_URL}?{urlencode(params)}"
+    request = Request(url, headers={"X-Api-Key": settings.NEWSAPI_API_KEY})
+
+    try:
+        with urlopen(request, timeout=10) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+    except (HTTPError, URLError, TimeoutError, json.JSONDecodeError) as exc:
+        print(f"[economic-news] NewsAPI everything fetch failed: {exc}")
+        return []
+
+    if payload.get("status") != "ok":
+        print(f"[economic-news] NewsAPI everything returned error: {payload}")
+        return []
+
+    return payload.get("articles", [])
 
 
 def fetch_newsapi_articles(category: str) -> list[dict]:
@@ -52,7 +84,11 @@ def fetch_newsapi_articles(category: str) -> list[dict]:
         print(f"[economic-news] NewsAPI returned error: {payload}")
         return []
 
-    return payload.get("articles", [])
+    articles = payload.get("articles", [])
+    if articles:
+        return articles
+
+    return fetch_newsapi_everything_articles()
 
 
 def build_news_record(article: dict, category: str) -> EconomicNews | None:

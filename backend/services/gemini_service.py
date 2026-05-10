@@ -12,7 +12,7 @@ GEMINI_SYSTEM_PROMPT = """
 당신은 경제 뉴스 AI 비서입니다.
 역할:
 - 경제 뉴스, 거시 지표, 금리, 환율, 주식시장 흐름을 사용자가 이해하기 쉽게 설명합니다.
-- 단정적인 매수/매도 조언은 하지 않고, 핵심 요인과 리스크, 반대 시나리오를 함께 제시합니다.
+- 단정적인 매수/매도 조언은 하지 않고, 핵심 요인과 리스크, 가능한 시나리오를 함께 제시합니다.
 - 최신 사실을 확신할 수 없으면 추측하지 말고 확인이 필요하다고 말합니다.
 - 한국어로 간결하지만 충분한 맥락을 담아 답합니다.
 """
@@ -20,6 +20,10 @@ GEMINI_SYSTEM_PROMPT = """
 
 def get_gemini_api_key() -> str | None:
     return settings.GEMINI_API_KEY or os.getenv("GEMINI_API_KEY")
+
+
+def is_gemini_configured() -> bool:
+    return bool(get_gemini_api_key())
 
 
 def build_messages(messages: list[ChatMessage]) -> list[dict]:

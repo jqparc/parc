@@ -1,0 +1,46 @@
+<main class="main-container stock-page">
+    <section class="stock-section stock-trade-grid-page">
+        <div class="stock-list-header">
+            <h2>국내주식 거래 추가</h2>
+            <div class="stock-actions">
+                <button type="button" id="stock-trade-save-button" class="stock-add-link">저장</button>
+                <a href="/asset/stck" class="stock-back-link" data-link>목록</a>
+            </div>
+        </div>
+
+        <form id="stock-trade-query-form" class="stock-range-panel stock-trade-query-panel">
+            <label>
+                조회일자
+                <input name="proc_date" type="date" required>
+            </label>
+            <button type="submit">조회</button>
+        </form>
+
+        <div class="stock-grid-toolbar">
+            <button type="button" id="stock-row-add-button">행 추가</button>
+            <button type="button" id="stock-row-delete-button">삭제</button>
+            <button type="button" id="stock-row-copy-button">복사</button>
+        </div>
+
+        <div class="stock-table-wrap">
+            <table class="common-table stock-table stock-trade-edit-table">
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="stock-row-check-all" aria-label="전체 선택">
+                        </th>
+                        <th>거래일자</th>
+                        <th>종목코드</th>
+                        <th>거래구분</th>
+                        <th>수량</th>
+                        <th>거래단가</th>
+                    </tr>
+                </thead>
+                <tbody id="stock-trade-edit-rows"></tbody>
+            </table>
+        </div>
+
+        <p id="stock-form-status" class="stock-status" hidden></p>
+        <p id="stock-form-error" class="stock-error" hidden></p>
+    </section>
+</main>

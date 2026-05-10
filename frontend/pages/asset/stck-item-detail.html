@@ -1,0 +1,74 @@
+<main class="main-container stock-page stock-item-detail-page">
+    <section class="stock-section">
+        <div class="stock-list-header">
+            <div>
+                <h2 id="stock-item-detail-title">국내주식 종목 상세</h2>
+                <div class="stock-summary" id="stock-item-detail-summary"></div>
+            </div>
+            <div class="stock-actions">
+                <a href="/asset/stck" class="stock-back-link" data-link>목록</a>
+            </div>
+        </div>
+
+        <form id="stock-item-search-form" class="stock-range-panel">
+            <label>
+                From
+                <input name="from_date" type="date" required>
+            </label>
+            <label>
+                To
+                <input name="to_date" type="date" required>
+            </label>
+            <button type="submit">조회</button>
+        </form>
+        <p id="stock-item-detail-error" class="stock-error" hidden></p>
+    </section>
+
+    <section class="stock-section stock-half-section">
+        <div class="stock-section-title">
+            <h3>일자별 보유</h3>
+        </div>
+        <div class="stock-table-wrap">
+            <table class="common-table stock-table stock-holding-history-table">
+                <thead>
+                    <tr>
+                        <th>기준일</th>
+                        <th>전일수량</th>
+                        <th>증가수량</th>
+                        <th>감소수량</th>
+                        <th>보유수량</th>
+                        <th>전일취득액</th>
+                        <th>증가취득액</th>
+                        <th>감소취득액</th>
+                        <th>취득액</th>
+                        <th>평가액</th>
+                        <th>평가손익</th>
+                        <th>매매손익</th>
+                    </tr>
+                </thead>
+                <tbody id="stock-holding-history"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="stock-section stock-half-section">
+        <div class="stock-section-title">
+            <h3>일자별 매매</h3>
+        </div>
+        <div class="stock-table-wrap">
+            <table class="common-table stock-table stock-trade-history-table">
+                <thead>
+                    <tr>
+                        <th>거래일자</th>
+                        <th>순번</th>
+                        <th>구분</th>
+                        <th>수량</th>
+                        <th>단가</th>
+                        <th>거래금액</th>
+                    </tr>
+                </thead>
+                <tbody id="stock-trade-history"></tbody>
+            </table>
+        </div>
+    </section>
+</main>

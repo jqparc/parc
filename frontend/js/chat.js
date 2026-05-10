@@ -74,7 +74,7 @@ async function sendMessage(content) {
     setLoading(true);
 
     try {
-        const response = await fetchAPI('/chat', {
+        const response = await fetchAPI('/gemini/chat', {
             method: 'POST',
             body: JSON.stringify({ messages }),
         });

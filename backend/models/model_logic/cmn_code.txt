@@ -1,0 +1,9 @@
+__tablename__ = "cmn_code"
+
+srch_gpcd	검색구분		PK
+dtl_code		상세코드		PK
+
+dtl_code_name	상세코드명
+
+created_at 	생성시기
+updated_at 	수정시기

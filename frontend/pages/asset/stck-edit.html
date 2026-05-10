@@ -1,0 +1,35 @@
+<main class="main-container stock-page">
+    <section class="stock-section stock-add-page">
+        <div class="stock-list-header">
+            <h2>국내주식 거래 수정</h2>
+            <a href="/asset/stck" class="stock-back-link" data-link>목록</a>
+        </div>
+        <form id="stock-form" class="stock-form stock-form-add">
+            <label>
+                거래일자
+                <input name="proc_date" type="date" required>
+            </label>
+            <label>
+                종목코드
+                <input name="itms_code" required>
+            </label>
+            <label>
+                거래구분
+                <select name="trns_code" required>
+                    <option value="B">매수(B)</option>
+                    <option value="S">매도(S)</option>
+                </select>
+            </label>
+            <label>
+                수량
+                <input name="qnty" type="number" min="1" step="1" required>
+            </label>
+            <label>
+                거래단가
+                <input name="prc" type="number" min="0" step="1" required>
+            </label>
+            <button type="submit">저장</button>
+        </form>
+        <p id="stock-form-error" class="stock-error" hidden></p>
+    </section>
+</main>

@@ -16,6 +16,8 @@ from db.database import Base
 import models.user_model 
 import models.post_model 
 import models.board_model 
+import models.assets.stck_model
+import models.common_code_model
 
 # target_metadata를 Base.metadata로 연결해줍니다.
 target_metadata = Base.metadata
