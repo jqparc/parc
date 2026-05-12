@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta
 
-from fastapi import HTTPException, status
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 
 from core.config import settings
+from core.exceptions import bad_request, unauthorized
 from core.security import create_access_token, get_password_hash, verify_password
 from repositories.user_repository import UserRepository
 from schemas.user_schema import PasswordChange, PasswordVerify, UserCreate, UserLogin
@@ -16,21 +16,15 @@ class UserService:
 
     def register_user(self, user_data: UserCreate):
         if self.user_repo.get_by_user_id(user_data.user_id):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="이미 존재하는 아이디입니다.",
-            )
+            raise bad_request("User ID is already in use.")
 
         if self.user_repo.get_by_nickname(user_data.nickname):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="이미 사용 중인 닉네임입니다.",
-            )
+            raise bad_request("Nickname is already in use.")
 
         user_dict = user_data.model_dump()
         user_dict["password"] = get_password_hash(user_data.password)
         new_user = self.user_repo.create(user_dict)
-        return {"success": True, "message": f"{new_user.nickname}님, 회원가입이 완료되었습니다."}
+        return {"success": True, "message": f"{new_user.nickname} registration completed."}
 
     def check_availability(self, user_id: str | None = None, nickname: str | None = None):
         result = {}
@@ -51,15 +45,12 @@ class UserService:
     def login_user(self, login_data: UserLogin):
         user = self.user_repo.get_by_user_id(login_data.user_id)
         if not user or not verify_password(login_data.password, user.password):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="아이디 또는 비밀번호가 올바르지 않습니다.",
-            )
+            raise unauthorized("User ID or password is incorrect.")
 
         access_token = create_access_token(data={"sub": user.user_id})
         return {
             "success": True,
-            "message": f"{user.nickname}님, 환영합니다.",
+            "message": f"Welcome, {user.nickname}.",
             "access_token": access_token,
             "token_type": "bearer",
         }
@@ -67,10 +58,7 @@ class UserService:
     def update_profile(self, current_user, update_data):
         if update_data.nickname and update_data.nickname != current_user.nickname:
             if self.user_repo.get_by_nickname(update_data.nickname):
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="이미 사용 중인 닉네임입니다.",
-                )
+                raise bad_request("Nickname is already in use.")
 
         update_dict = update_data.model_dump(exclude_unset=True)
         for key, value in update_dict.items():
@@ -78,14 +66,11 @@ class UserService:
 
         self.user_repo.db.commit()
         self.user_repo.db.refresh(current_user)
-        return {"success": True, "message": "정보가 성공적으로 수정되었습니다."}
+        return {"success": True, "message": "Profile updated successfully."}
 
     def verify_password_for_change(self, current_user, verify_data: PasswordVerify):
         if not verify_password(verify_data.current_password, current_user.password):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="현재 비밀번호가 일치하지 않습니다.",
-            )
+            raise bad_request("Current password does not match.")
 
         payload = {
             "sub": current_user.user_id,
@@ -103,20 +88,14 @@ class UserService:
                 algorithms=[settings.ALGORITHM],
             )
         except JWTError as exc:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="비밀번호 확인 시간이 만료되었습니다. 다시 확인해 주세요.",
-            ) from exc
+            raise bad_request("Password verification has expired. Please verify again.") from exc
 
         if (
             payload.get("sub") != current_user.user_id
             or payload.get("purpose") != "password_change"
         ):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="비밀번호 확인 정보가 올바르지 않습니다.",
-            )
+            raise bad_request("Password verification token is invalid.")
 
         current_user.password = get_password_hash(pw_data.new_password)
         self.user_repo.db.commit()
-        return {"success": True, "message": "비밀번호가 성공적으로 변경되었습니다."}
+        return {"success": True, "message": "Password changed successfully."}

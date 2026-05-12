@@ -1,6 +1,4 @@
-from pydantic import BaseModel, ConfigDict
-
-from schemas.asset.stck import (
+from .stck import (
     StockItemCreate,
     StockItemResponse,
     StockItemSearchResponse,
@@ -14,21 +12,7 @@ from schemas.asset.stck import (
     StockTradeUpdate,
 )
 
-
-class AssetCommonCodeResponse(BaseModel):
-    dtl_code: str
-    dtl_code_name: str
-
-    model_config = ConfigDict(from_attributes=True)
-
-
-class AssetCommonCodeSaveRequest(BaseModel):
-    codes: list[AssetCommonCodeResponse]
-
-
 __all__ = [
-    "AssetCommonCodeResponse",
-    "AssetCommonCodeSaveRequest",
     "StockItemCreate",
     "StockItemResponse",
     "StockItemSearchResponse",

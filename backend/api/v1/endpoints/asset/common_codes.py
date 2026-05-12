@@ -1,8 +1,9 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+from core.exceptions import bad_request
 from db.database import get_db
 from models.common_code_model import CommonCode
 from schemas.asset_schema import AssetCommonCodeResponse, AssetCommonCodeSaveRequest
@@ -31,9 +32,9 @@ def save_business_types(payload: AssetCommonCodeSaveRequest, db: Session = Depen
         detail_code = code.dtl_code.strip()
         detail_name = code.dtl_code_name.strip()
         if not detail_code or not detail_name:
-            raise HTTPException(status_code=400, detail="업종코드와 업종명은 필수입니다.")
+            raise bad_request("Business type code and name are required.")
         if detail_code in seen_codes:
-            raise HTTPException(status_code=400, detail=f"중복된 업종코드가 있습니다: {detail_code}")
+            raise bad_request(f"Duplicate business type code: {detail_code}")
         seen_codes.add(detail_code)
         normalized_codes.append((detail_code, detail_name))
 

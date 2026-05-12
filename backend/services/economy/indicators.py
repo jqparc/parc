@@ -1,0 +1,17 @@
+TARGET_INDICATORS = {
+    "^GSPC": {"name": "S&P 500", "unit": "pt"},
+    "^IXIC": {"name": "Nasdaq Composite", "unit": "pt"},
+    "^DJI": {"name": "Dow Jones Industrial Average", "unit": "pt"},
+    "^VIX": {"name": "CBOE Volatility Index", "unit": "pt"},
+    "^KS11": {"name": "KOSPI", "unit": "pt"},
+    "^KQ11": {"name": "KOSDAQ", "unit": "pt"},
+    "KRW=X": {"name": "USD/KRW", "unit": "KRW"},
+    "DX-Y.NYB": {"name": "US Dollar Index", "unit": "pt"},
+    "EURUSD=X": {"name": "EUR/USD", "unit": "USD"},
+    "JPY=X": {"name": "USD/JPY", "unit": "JPY"},
+    "^TNX": {"name": "US 10Y Treasury Yield", "unit": "%"},
+    "^IRX": {"name": "US 13 Week Treasury Yield", "unit": "%"},
+    "GC=F": {"name": "Gold Futures", "unit": "USD"},
+    "CL=F": {"name": "WTI Crude Oil Futures", "unit": "USD"},
+    "SI=F": {"name": "Silver Futures", "unit": "USD"},
+}

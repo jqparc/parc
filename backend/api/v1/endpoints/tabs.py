@@ -1,10 +1,11 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.exc import IntegrityError
 
 from api.v1.dependencies.auth_deps import get_current_user, get_optional_current_user
 from api.v1.dependencies.service_deps import get_tab_service
+from core.exceptions import bad_request, forbidden, not_found
 from models.user_model import User, UserRole
 from schemas.tab_schema import TabCreate, TabResponse, TabUpdate
 from services.tab_service import TabService
@@ -30,7 +31,7 @@ def require_admin(current_user: User) -> None:
     if current_user.role == UserRole.ADMIN:
         return
 
-    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin permission required.")
+    raise forbidden("Admin permission required.")
 
 
 @router.post("/", response_model=TabResponse, status_code=status.HTTP_201_CREATED)
@@ -44,7 +45,7 @@ def create_tab(
         return service.create_tab(tab_data)
     except IntegrityError as exc:
         service.tab_repo.db.rollback()
-        raise HTTPException(status_code=400, detail="Tab ID already exists in this menu.") from exc
+        raise bad_request("Tab ID already exists in this menu.") from exc
 
 
 @router.patch("/{menu_id}/{tab_id}", response_model=TabResponse)
@@ -58,6 +59,6 @@ def update_tab(
     require_admin(current_user)
     tab = service.update_tab(menu_id, tab_id, tab_data)
     if not tab:
-        raise HTTPException(status_code=404, detail="Tab not found.")
+        raise not_found("Tab not found.")
 
     return tab

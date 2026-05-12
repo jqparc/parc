@@ -1,10 +1,11 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.exc import IntegrityError
 
 from api.v1.dependencies.auth_deps import get_current_user, get_optional_current_user
 from api.v1.dependencies.service_deps import get_menu_service
+from core.exceptions import bad_request, forbidden, not_found
 from models.user_model import User, UserRole
 from schemas.menu_schema import MenuCreate, MenuResponse, MenuUpdate
 from services.menu_service import MenuService
@@ -29,7 +30,7 @@ def require_admin(current_user: User) -> None:
     if current_user.role == UserRole.ADMIN:
         return
 
-    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin permission required.")
+    raise forbidden("Admin permission required.")
 
 
 @router.post("/", response_model=MenuResponse, status_code=status.HTTP_201_CREATED)
@@ -43,7 +44,7 @@ def create_menu(
         return service.create_menu(menu_data)
     except IntegrityError as exc:
         service.menu_repo.db.rollback()
-        raise HTTPException(status_code=400, detail="Menu ID already exists.") from exc
+        raise bad_request("Menu ID already exists.") from exc
 
 
 @router.patch("/{menu_id}", response_model=MenuResponse)
@@ -56,6 +57,6 @@ def update_menu(
     require_admin(current_user)
     menu = service.update_menu(menu_id, menu_data)
     if not menu:
-        raise HTTPException(status_code=404, detail="Menu not found.")
+        raise not_found("Menu not found.")
 
     return menu
