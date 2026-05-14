@@ -6,7 +6,7 @@ from db.database import Base
 
 
 class StockItem(Base):
-    __tablename__ = "stck_itm"
+    __tablename__ = "stck_itms"
 
     proc_date = Column(Date, primary_key=True, nullable=False, index=True)
     itms_code = Column(String(20), primary_key=True, nullable=False, index=True)

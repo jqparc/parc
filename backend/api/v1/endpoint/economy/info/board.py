@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from api.v1.dependency.auth_dep import get_current_user
-from model.user import User
+from model.system.user import User
 from schema.economy.info import BoardResponse
 from service.economy.info import BoardService
 from .dependency import get_board_service

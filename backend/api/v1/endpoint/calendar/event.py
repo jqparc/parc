@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from api.v1.dependency.auth_dep import get_current_user, get_optional_current_user
 from db.database import get_db
-from model.user import User
+from model.system.user import User
 from schema.calendar import CalendarEventCreate, CalendarEventResponse, CalendarEventUpdate
 from service.calendar import CalendarEventService
 

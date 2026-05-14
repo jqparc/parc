@@ -19,7 +19,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.create_table(
-        "stck_itm",
+        "stck_itms",
         sa.Column("proc_date", sa.Date(), nullable=False),
         sa.Column("itms_code", sa.String(length=20), nullable=False),
         sa.Column("itms_name", sa.String(length=100), nullable=False),
@@ -30,11 +30,11 @@ def upgrade() -> None:
         sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
         sa.PrimaryKeyConstraint("proc_date", "itms_code"),
     )
-    op.create_index(op.f("ix_stck_itm_itms_code"), "stck_itm", ["itms_code"], unique=False)
+    op.create_index(op.f("ix_stck_itms_itms_code"), "stck_itms", ["itms_code"], unique=False)
 
     op.execute(
         """
-        INSERT INTO stck_itm (proc_date, itms_code, itms_name, shtg_code, bzty_code)
+        INSERT INTO stck_itms (proc_date, itms_code, itms_name, shtg_code, bzty_code)
         SELECT proc_date, itms_code, MIN(itms_name), 'A', NULL
         FROM stck_tr
         WHERE itms_name IS NOT NULL
@@ -54,7 +54,7 @@ def downgrade() -> None:
         """
         UPDATE stck_tr
         SET itms_name = COALESCE(
-            (SELECT stck_itm.itms_name FROM stck_itm WHERE stck_itm.itms_code = stck_tr.itms_code),
+            (SELECT stck_itms.itms_name FROM stck_itms WHERE stck_itms.itms_code = stck_tr.itms_code),
             stck_tr.itms_code
         )
         """
@@ -63,5 +63,5 @@ def downgrade() -> None:
     with op.batch_alter_table("stck_tr") as batch_op:
         batch_op.alter_column("itms_name", nullable=False)
 
-    op.drop_index(op.f("ix_stck_itm_itms_code"), table_name="stck_itm")
-    op.drop_table("stck_itm")
+    op.drop_index(op.f("ix_stck_itms_itms_code"), table_name="stck_itms")
+    op.drop_table("stck_itms")

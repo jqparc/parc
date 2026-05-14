@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from core.exception import not_found
 from model.calendar import CalendarEvent
-from model.user import User
+from model.system.user import User
 from repository.calendar import CalendarEventRepository
 from schema.calendar import CalendarEventCreate, CalendarEventUpdate
 

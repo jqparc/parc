@@ -67,14 +67,14 @@ def upgrade() -> None:
         op.create_index(op.f("ix_stck_tr_user_id"), "stck_tr", ["user_id"], unique=False)
         op.create_index(op.f("ix_stck_tr_itms_code"), "stck_tr", ["itms_code"], unique=False)
 
-    item_columns = _columns("stck_itm")
+    item_columns = _columns("stck_itms")
     if "prc" in item_columns and "clpr" not in item_columns:
-        with op.batch_alter_table("stck_itm") as batch_op:
+        with op.batch_alter_table("stck_itms") as batch_op:
             batch_op.alter_column("prc", new_column_name="clpr")
-    _drop_column_if_exists("stck_itm", "last_sync_at")
-    if "id" in _columns("stck_itm"):
+    _drop_column_if_exists("stck_itms", "last_sync_at")
+    if "id" in _columns("stck_itms"):
         op.create_table(
-            "stck_itm_new",
+            "stck_itms_new",
             sa.Column("proc_date", sa.Date(), nullable=False),
             sa.Column("itms_code", sa.String(length=20), nullable=False),
             sa.Column("itms_name", sa.String(length=100), nullable=False),
@@ -87,7 +87,7 @@ def upgrade() -> None:
         )
         op.execute(
             """
-            INSERT INTO stck_itm_new (proc_date, itms_code, itms_name, shtg_code, bzty_code, clpr, created_at, updated_at)
+            INSERT INTO stck_itms_new (proc_date, itms_code, itms_name, shtg_code, bzty_code, clpr, created_at, updated_at)
             SELECT
                 COALESCE(proc_date, DATE(created_at), DATE('now')),
                 itms_code,
@@ -97,13 +97,13 @@ def upgrade() -> None:
                 MAX(clpr),
                 MIN(created_at),
                 MAX(updated_at)
-            FROM stck_itm
+            FROM stck_itms
             GROUP BY COALESCE(proc_date, DATE(created_at), DATE('now')), itms_code
             """
         )
-        op.drop_table("stck_itm")
-        op.rename_table("stck_itm_new", "stck_itm")
-        op.create_index(op.f("ix_stck_itm_itms_code"), "stck_itm", ["itms_code"], unique=False)
+        op.drop_table("stck_itms")
+        op.rename_table("stck_itms_new", "stck_itms")
+        op.create_index(op.f("ix_stck_itms_itms_code"), "stck_itms", ["itms_code"], unique=False)
 
     master_columns = _columns("stck_ma")
     rename_pairs = [
@@ -174,9 +174,9 @@ def downgrade() -> None:
         with op.batch_alter_table("stck_tr") as batch_op:
             batch_op.alter_column("prc", new_column_name="prcn")
 
-    item_columns = _columns("stck_itm")
+    item_columns = _columns("stck_itms")
     if "clpr" in item_columns and "prc" not in item_columns:
-        with op.batch_alter_table("stck_itm") as batch_op:
+        with op.batch_alter_table("stck_itms") as batch_op:
             batch_op.alter_column("clpr", new_column_name="prc")
 
     master_columns = _columns("stck_ma")

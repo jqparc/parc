@@ -3,7 +3,7 @@ from datetime import date
 from sqlalchemy.orm import Query, Session
 
 from model.calendar import CalendarEvent
-from model.user import User, UserRole
+from model.system.user import User, UserRole
 
 
 class CalendarEventRepository:

@@ -16,8 +16,8 @@ from db.database import Base
 import model.asset
 import model.calendar
 import model.economy
-import model.navigation
-import model.user
+import model.system.navigation
+import model.system.user
 
 # Connect SQLAlchemy metadata for Alembic autogenerate.
 target_metadata = Base.metadata

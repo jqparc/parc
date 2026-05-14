@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from api.v1.dependency.auth_dep import get_current_user
-from model.user import User
+from model.system.user import User
 from schema.economy.info import PostCreate, PostListResponse, PostResponse, PostUpdate
 from service.economy.info import BoardService, PostService
 from .dependency import get_board_service, get_post_service

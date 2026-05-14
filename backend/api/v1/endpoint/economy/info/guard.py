@@ -1,5 +1,5 @@
 from core.exception import forbidden
-from model.user import User, UserRole
+from model.system.user import User, UserRole
 
 
 def check_post_owner_or_admin(post_author_id: int, current_user: User) -> None:

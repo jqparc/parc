@@ -24,7 +24,6 @@ TABLE_RENAMES = (
     ("boards", "board"),
     ("posts", "post"),
     ("user_calendar_events", "user_calendar_event"),
-    ("stck_itms", "stck_itm"),
 )
 
 
@@ -39,6 +38,11 @@ def _rename_existing_tables(pairs: tuple[tuple[str, str], ...]) -> None:
             op.rename_table(old_name, new_name)
             table_names.remove(old_name)
             table_names.add(new_name)
+        elif old_name in table_names and new_name in table_names:
+            old_count = op.get_bind().execute(sa.text(f"SELECT COUNT(*) FROM {old_name}")).scalar_one()
+            new_count = op.get_bind().execute(sa.text(f"SELECT COUNT(*) FROM {new_name}")).scalar_one()
+            if old_count and not new_count:
+                op.execute(sa.text(f"INSERT INTO {new_name} SELECT * FROM {old_name}"))
 
 
 def upgrade() -> None:

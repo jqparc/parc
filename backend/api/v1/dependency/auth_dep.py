@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session
 from core.config import settings
 from core.exception import unauthorized
 from db.database import get_db
-from model.user import User
-from repository.user import UserRepository
+from model.system.user import User
+from repository.system.user import UserRepository
 
 
 def extract_token(request: Request) -> str | None:

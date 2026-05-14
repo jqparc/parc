@@ -20,5 +20,5 @@ class Post(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     deleted_at = Column(DateTime(timezone=True), nullable=True)
 
-    board = relationship("Board", back_populates="post")
-    author = relationship("User", back_populates="post")
+    board = relationship("Board", back_populates="posts")
+    author = relationship("User", back_populates="posts")
