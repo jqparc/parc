@@ -6,57 +6,7 @@ body {
     display: flex;
     flex-direction: column;
 }
-header {
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; /* 세로 기준으로 가운데 정렬합니다 */    
-    background-color: rgb(255, 101, 101);
-    height: 30px;
-}
-.auth-menu a{
-    font-size: 15px;
-}
-.nav-menu {
-    background-color: rgb(114, 151, 40);
-    display: flex;
-    gap: 4px;
-    padding: 4px 8px;
-}
 
-.nav-tab {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background-color: rgb(81, 97, 14);
-    display: flex;
-    gap: 4px;
-    padding: 4px 8px;
-}
-
-.nav-link {
-    color: #1f2937;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 28px;
-    padding: 0 12px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.42);
-}
-
-.nav-link.active {
-    color: #ffffff;
-    background-color: #1f2937;
-    box-shadow: inset 0 -2px 0 rgba(255, 255, 255, 0.35);
-}
 
 main {
     background-color: rgb(141, 141, 141);

@@ -21,7 +21,7 @@ const handleLoginSubmit = async (e) => {
     try {
         // 3. 백엔드(FastAPI)로 로그인 요청 (fetch API)
         
-        const data = await fetchAPI('/users/login', {
+        const data = await fetchAPI('/user/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

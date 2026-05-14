@@ -1,7 +1,7 @@
 import { fetchAPI } from '/js/api.js';
 
-const MASTER_PATH = '/assets/stock-masters/item';
-const TRADE_PATH = '/assets/domestic-stocks/item';
+const MASTER_PATH = '/asset/stock-master/item';
+const TRADE_PATH = '/asset/domestic-stock/item';
 
 const DOM = {
     title: () => document.getElementById('stock-item-detail-title'),

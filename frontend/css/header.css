@@ -1,0 +1,39 @@
+
+header {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; /* 세로 기준으로 가운데 정렬합니다 */    
+    background-color: rgb(255, 255, 255);
+    height: 25px;
+}
+
+.logo-img{
+    height: 25px; /* 헤더 크기에 맞춰 30px ~ 45px 사이로 조절해 보세요 */
+    width: auto;  /* 원본 가로세로 비율(Aspect Ratio) 유지 */
+    object-fit: contain; /* 이미지가 잘리지 않고 비율에 맞게 들어가도록 보장 */
+    display: block;
+}
+
+.auth-menu a {
+    text-decoration: none; 
+    color: #333333; 
+    font-size: 15px; 
+}
+
+.logout-btn {
+    /* font-size: 0.8rem; */
+    /* padding: 3px 8px; */
+    /* background-color: rgb(156, 156, 156); */
+    
+    /* 2. 글자 크기 줄이기 (기본보다 작은 0.8rem ~ 0.85rem 추천) */
+    
+    /* 3. 시각적 균형을 위한 설정 */
+    background-color: transparent; 
+    border: 1px solid #aeaeae;  
+    /* border-radius: 4px;            살짝 둥근 모서리 */
+    /* cursor: pointer; */
+    /* transition: all 0.2s ease;     부드러운 호버 효과 */
+    
+    /* 4. 세로 정렬 맞추기 */
+    /* vertical-align: middle;        텍스트와 라인을 맞춤 */
+}

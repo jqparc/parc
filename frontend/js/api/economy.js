@@ -6,7 +6,7 @@ import { fetchAPI } from '/js/api.js';
  */
 export async function fetchEconomySummaries() {
     try {
-        const data = await fetchAPI('/economy/indicators/summary');
+        const data = await fetchAPI('/economy/indicator/summary');
         return data && data.summaries ? data.summaries : [];
     } catch (error) {
         console.error('요약 데이터 로딩 오류:', error.message);
@@ -21,7 +21,7 @@ export async function fetchEconomyHistory(symbol) {
     try {
         // 심볼(예: ^GSPC)이 URL에 포함되므로 인코딩 처리
         const encodedSymbol = encodeURIComponent(symbol);
-        const data = await fetchAPI(`/economy/indicators/${encodedSymbol}/history`);
+        const data = await fetchAPI(`/economy/indicator/${encodedSymbol}/history`);
         return data && data.history ? data.history : [];
     } catch (error) {
         console.error(`${symbol} 히스토리 로딩 오류:`, error.message);

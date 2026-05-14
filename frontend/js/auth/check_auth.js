@@ -9,6 +9,11 @@ export async function checkAuthStatus(options) {
 
 // UI 및 라우팅 역할만 수행하도록 수정[cite: 5]
 async function logout() {
+    if (!confirm("로그아웃 하시겠습니까?")) {
+        // '아니오'를 누르면 여기서 함수 종료
+        return;
+    }
+    
     try {
         await authService.logout(); 
     } finally {
@@ -31,9 +36,10 @@ export async function updateAuthUI(user = undefined) {
     if (user) {
         authMenu.innerHTML = `
             <a href="/mypage" class="user-link" data-link>
-                <strong>${user.nickname}</strong>님
+                <strong>${user.nickname}</strong> 님
             </a>
-            <button id="logout-btn" class="logout-btn">로그아웃</button>
+            <a href="/signup" id="logout-btn" class="logout-btn" data-link>로그아웃</a>
+            
         `;
 
         document.getElementById('logout-btn').addEventListener('click', logout);

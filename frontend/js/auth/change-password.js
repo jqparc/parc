@@ -53,7 +53,7 @@ async function handleChangePassword(token) {
 
     try {
         setSubmitting(true);
-        await fetchAPI('/users/me/password', {
+        await fetchAPI('/user/me/password', {
             method: 'PUT',
             body: JSON.stringify({
                 verification_token: token,

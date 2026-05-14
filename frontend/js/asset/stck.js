@@ -1,8 +1,8 @@
 import { fetchAPI } from '/js/api.js';
 
-const MASTER_PATH = '/assets/stock-masters';
-const MASTER_GENERATE_PATH = '/assets/stock-masters/generate';
-const ITEM_GENERATE_PATH = '/assets/stock-items/generate';
+const MASTER_PATH = '/asset/stock-master';
+const MASTER_GENERATE_PATH = '/asset/stock-master/generate';
+const ITEM_GENERATE_PATH = '/asset/stock-item/generate';
 
 const DOM = {
     summary: () => document.getElementById('stock-summary'),

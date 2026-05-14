@@ -1,6 +1,6 @@
 import { fetchAPI } from '/js/api.js';
 
-const API_PATH = '/assets/domestic-stocks';
+const API_PATH = '/asset/domestic-stock';
 
 const DOM = {
     title: () => document.getElementById('stock-detail-title'),
@@ -158,7 +158,7 @@ async function handleDelete(event) {
 async function loadDetail() {
     const tradeKey = getTradeKey();
     try {
-        const lots = await fetchAPI(`${API_PATH}/key/${encodeURIComponent(tradeKey)}/lots`);
+        const lots = await fetchAPI(`${API_PATH}/key/${encodeURIComponent(tradeKey)}/lot`);
         renderDetail(Array.isArray(lots) ? lots : []);
     } catch (error) {
         setError(error.message || '국내주식 상세 정보를 불러오지 못했습니다.');

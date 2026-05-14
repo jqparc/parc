@@ -63,7 +63,7 @@ async function checkAvailability(field, value) {
     setFieldMessage(msgEl, '중복 확인 중...', true);
 
     try {
-        const data = await fetchAPI(`/users/availability?${field}=${encodeURIComponent(trimmedValue)}`);
+        const data = await fetchAPI(`/user/availability?${field}=${encodeURIComponent(trimmedValue)}`);
         const result = data?.[field];
 
         if (result?.value !== trimmedValue) {
@@ -159,7 +159,7 @@ async function handleSignup() {
         signupBtn.disabled = true;
         signupBtn.textContent = '가입 처리 중...';
 
-        await fetchAPI('/users/signup', {
+        await fetchAPI('/user/signup', {
             method: 'POST',
             body: JSON.stringify({
                 user_id: userIdInput,

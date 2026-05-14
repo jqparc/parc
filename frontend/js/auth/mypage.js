@@ -2,7 +2,7 @@
 import { fetchAPI } from '/js/api.js';
 import { navigateTo } from '/js/router.js';
 
-const PASSWORD_VERIFY_TOKEN_KEY = 'passwordVerifyToken';
+const PASSWORD_VERIFY_TOKEN_KEY = 'passwordChangeToken';
 
 const DOM = {
     changePwdLink: () => document.getElementById('change-password-link'),
@@ -90,7 +90,7 @@ async function handleVerifySubmit() {
         isSubmitting = true;
         DOM.submitBtn().disabled = true;
         
-        const result = await fetchAPI('/users/me/password/verify', {
+        const result = await fetchAPI('/user/me/password/verify', {
             method: 'POST',
             body: JSON.stringify({ current_password: currentPassword }),
             signal: abortController.signal 

@@ -1,7 +1,7 @@
 import { fetchAPI } from '/js/api.js';
 import { navigateTo } from '/js/router.js';
 
-const API_PATH = '/assets/domestic-stocks';
+const API_PATH = '/asset/domestic-stock';
 
 const DOM = {
     queryForm: () => document.getElementById('stock-trade-query-form'),

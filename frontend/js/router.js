@@ -1,6 +1,6 @@
 // frontend/js/router.js
-import { routes, dynamicRoutes } from '/js/routes.js';
-import { renderNavigation } from '/js/components/navigation.js';
+import { routes, dynamicRoutes } from '/js/route.js';
+import { renderNavigation } from '/js/component/navigation.js';
 import { checkAuthStatus, updateAuthUI } from '/js/auth/check_auth.js';
 import { authGuard } from '/js/auth/guard.js';
 
@@ -19,7 +19,7 @@ const findRoute = (path) => {
     if (dynamic) return dynamic.route;
 
     // 3. 매칭되는 경로가 없을 때
-    return { html: "/pages/404.html", js: null, auth: false };
+    return { html: "/page/404.html", js: null, auth: false };
 };
 
 const router = async () => {
@@ -31,7 +31,9 @@ const router = async () => {
     const route = findRoute(path);
 
     try {
-        const authUser = await checkAuthStatus();
+        const requiresAuthCheck = route.auth === true || route.auth === 'guest';
+        const authStatusPromise = checkAuthStatus().catch(() => null);
+        const authUser = requiresAuthCheck ? await authStatusPromise : null;
         const redirectPath = await authGuard(route, authUser, routeKey, path);
 
         if (redirectPath) {
@@ -52,13 +54,17 @@ const router = async () => {
         // JS 모듈 실행
         if (route.js) {
             currentModule = await import(route.js);
-            if (currentModule?.init) currentModule.init();
+            if (currentModule?.init) await currentModule.init();
         } else {
             currentModule = null;
         }
 
         // UI 업데이트[cite: 4]
-        await updateAuthUI(authUser);
+        if (requiresAuthCheck) {
+            await updateAuthUI(authUser);
+        } else {
+            authStatusPromise.then(updateAuthUI).catch(() => updateAuthUI(null));
+        }
         await renderNavigation({ resetToFirst: path === "/" });
         activeRouteKey = routeKey;
 

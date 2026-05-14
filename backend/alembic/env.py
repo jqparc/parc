@@ -2,7 +2,7 @@
 
 import sys
 import os
-# 최상위 경로를 path에 추가하여 모듈을 찾을 수 있게 함
+# Add backend root to sys.path so local modules can be imported.
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from logging.config import fileConfig
@@ -13,13 +13,13 @@ from alembic import context
 from core.config import settings
 from db.database import Base
 
-import models.user_model 
-import models.post_model 
-import models.board_model 
-import models.assets.stck_model
-import models.common_code_model
+import model.asset
+import model.calendar
+import model.economy
+import model.navigation
+import model.user
 
-# target_metadata를 Base.metadata로 연결해줍니다.
+# Connect SQLAlchemy metadata for Alembic autogenerate.
 target_metadata = Base.metadata
 
 # this is the Alembic Config object, which provides

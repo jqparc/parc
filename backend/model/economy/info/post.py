@@ -1,0 +1,24 @@
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
+
+from db.database import Base
+
+
+class Post(Base):
+    __tablename__ = "post"
+
+    id = Column(Integer, primary_key=True, index=True)
+    board_id = Column(Integer, ForeignKey("board.id"), nullable=False, index=True)
+    author_id = Column(Integer, ForeignKey("user.id"), nullable=False, index=True)
+    title = Column(String(200), nullable=False)
+    content = Column(Text, nullable=False)
+    views = Column(Integer, default=0, nullable=False)
+    is_notice = Column(Boolean, default=False, nullable=False)
+    is_deleted = Column(Boolean, default=False, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    deleted_at = Column(DateTime(timezone=True), nullable=True)
+
+    board = relationship("Board", back_populates="post")
+    author = relationship("User", back_populates="post")

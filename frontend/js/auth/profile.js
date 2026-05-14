@@ -7,7 +7,7 @@ import { CONFIG } from '/js/config.js';
 export async function init() {
     try {
         // api.js의 fetchAPI가 쿠키(토큰)를 실어서 보냅니다.
-        const user = await fetchAPI('/users/me'); 
+        const user = await fetchAPI('/user/me'); 
 
         // HTML이 그려진 이후이므로 안전하게 DOM에 접근해 데이터를 채웁니다.
         document.getElementById('user_id').value = user.user_id;
@@ -41,7 +41,7 @@ document.getElementById('update-btn').addEventListener('click', async () => {
 
     try {
         // api.js를 통해 PUT 요청 전송
-        const result = await fetchAPI('/users/me', {
+        const result = await fetchAPI('/user/me', {
             method: 'PUT',
             body: JSON.stringify(updateData)
         });

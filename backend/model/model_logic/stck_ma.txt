@@ -1,0 +1,24 @@
+__tablename__ = "stck_ma"
+
+user_id             사용자        PK
+proc_date           처리일자      PK
+itms_code           종목코드      PK
+
+shtg_code           시장구분 : 당일 stck_itm.shtg_code
+bzty_code           업종구분 : 당일 stck_itm.bzty_code
+
+prdy_stcn           전일보유수량 : 전일 prdy_stcn + incr_stcn - dcrs_stcn
+incr_stcn           증가보유수량 : 당일 sum(stck_tr.qnty), trns_code = 'B'
+dcrs_stcn           감소보유수량 : 당일 sum(stck_tr.qnty), trns_code = 'S'
+
+prdy_acqs_amt       전일취득액 : 전일 prdy_acqs_amt + incr_acqs_amt - dcrs_acqs_amt
+incr_acqs_amt       증가취득액 : 당일 sum(stck_tr.qnty * stck_tr.prc), trns_code = 'B'
+dcrs_acqs_amt       감소취득액 : 당일 sum(stck_tr.qnty * stck_tr.prc), trns_code = 'S'
+prls_amt            평가손익 : (stck_itm.clpr - 평균단가) * 현재보유수량
+vlamt               평가액 : 현재취득액 + prls_amt
+slby_prls_amt       매매손익 : 매도금액 - (매도수량 * 매도 기준 평균단가)
+
+created_at          생성시기
+updated_at          수정시기
+
+user = relationship("User")
