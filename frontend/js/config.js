@@ -12,7 +12,7 @@ export const CONFIG = {
 
     // 💡 추가된 부분: API 엔드포인트 상수화
     API_ENDPOINTS: {
-        LOGIN: '/login',
+        LOGIN: '/user/login',
         LOGOUT: '/user/logout', // 실제 소스코드 기준
         USERS_ME: '/user/me',   // 실제 소스코드 기준
         USERS_REFRESH: '/user/refresh',

@@ -4,4 +4,9 @@ export const boardRoutes = {
         js: '/js/board/post-write.js',
         auth: true,
     },
+    '/boards/write': {
+        html: '/page/board/write.html',
+        js: '/js/board/post-write.js',
+        auth: true,
+    },
 };

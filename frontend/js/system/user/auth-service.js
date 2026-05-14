@@ -1,4 +1,4 @@
-// frontend/js/auth/authService.js
+// frontend/js/system/user/auth-service.js
 import { fetchAPI } from '/js/api.js';
 import { CONFIG } from '/js/config.js';
 

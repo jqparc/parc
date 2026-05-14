@@ -1,4 +1,4 @@
-// frontend/js/auth/mypage.js
+// frontend/js/system/user/mypage.js
 import { fetchAPI } from '/js/api.js';
 import { navigateTo } from '/js/router.js';
 

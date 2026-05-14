@@ -1,5 +1,5 @@
 import { AuthError } from '/js/api.js';
-import { authService } from '/js/auth/authService.js';
+import { authService } from '/js/system/user/auth-service.js';
 import { navigateTo } from '/js/router.js';
 
 const SESSION_REFRESH_INTERVAL_MS = 5 * 60 * 1000;

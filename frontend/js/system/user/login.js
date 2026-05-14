@@ -1,8 +1,8 @@
-// frontend/js/auth/login.js
+// frontend/js/system/user/login.js
 import { navigateTo } from "/js/router.js";
 import { fetchAPI } from '/js/api.js';
 import { CONFIG } from '/js/config.js';
-import { authService } from '/js/auth/authService.js';
+import { authService } from '/js/system/user/auth-service.js';
 
 const handleLoginSubmit = async (e) => {
     // 1. 브라우저의 기본 폼 제출(새로고침 및 URL 쿼리스트링 추가) 방지! ⭐ 가장 중요

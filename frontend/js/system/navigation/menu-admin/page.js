@@ -1,9 +1,9 @@
 import { navigateTo } from '/js/router.js';
-import { authService } from '/js/auth/authService.js';
-import { createMenu, createTab, fetchMenus, fetchTabs, updateMenu, updateTab } from '/js/auth/menu-admin/api.js';
-import { DOM, setAdminControlsVisible } from '/js/auth/menu-admin/dom.js';
-import { getFormPayload, getUpdatePayload } from '/js/auth/menu-admin/form.js';
-import { renderMenuTable, renderTabTable, setTabTitle } from '/js/auth/menu-admin/render.js';
+import { authService } from '/js/system/user/auth-service.js';
+import { createMenu, createTab, fetchMenus, fetchTabs, updateMenu, updateTab } from '/js/system/navigation/menu-admin/api.js';
+import { DOM, setAdminControlsVisible } from '/js/system/navigation/menu-admin/dom.js';
+import { getFormPayload, getUpdatePayload } from '/js/system/navigation/menu-admin/form.js';
+import { renderMenuTable, renderTabTable, setTabTitle } from '/js/system/navigation/menu-admin/render.js';
 
 export function createMenuAdminPage() {
     const state = {

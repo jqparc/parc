@@ -1,5 +1,5 @@
 import { navigateTo } from '/js/router.js';
-import { authService } from '/js/auth/authService.js';
+import { authService } from '/js/system/user/auth-service.js';
 import { createPost, fetchBoards } from '/js/board/post-api.js';
 
 const DEFAULT_BOARD_CODE = 'economy-info';

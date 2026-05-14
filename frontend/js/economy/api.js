@@ -1,4 +1,4 @@
-// frontend/js/api/economy.js
+// frontend/js/economy/api.js
 import { fetchAPI } from '/js/api.js'; 
 
 /**

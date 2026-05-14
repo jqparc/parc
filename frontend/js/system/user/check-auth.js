@@ -1,5 +1,5 @@
-// frontend/js/auth/check_auth.js
-import { authService } from '/js/auth/authService.js';
+// frontend/js/system/user/check-auth.js
+import { authService } from '/js/system/user/auth-service.js';
 import { navigateTo } from '/js/router.js';
 
 // 외부에서 checkAuthStatus를 호출하던 기존 호환성을 위해 래핑[cite: 5]

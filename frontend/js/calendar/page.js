@@ -3,7 +3,7 @@ import { createCalendarEvent, deleteCalendarEvent, fetchCalendarEvents, fetchCal
 import { formatKoreanDate, toDateKey } from '/js/calendar/date-util.js';
 import { calendarDom as DOM } from '/js/calendar/dom.js';
 // 🔥 보완 1: 다른 화면과 동일하게 통합된 authService를 사용합니다.
-import { authService } from '/js/auth/authService.js';
+import { authService } from '/js/system/user/auth-service.js';
 
 let calendar = null;
 let selectedDate = toDateKey(new Date());

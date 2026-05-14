@@ -1,8 +1,8 @@
-// frontend/js/auth/change-password.js
+// frontend/js/system/user/change-password.js
 import { navigateTo } from "/js/router.js";
 import { fetchAPI } from '/js/api.js';
 import { CONFIG } from '/js/config.js';
-import { authService } from '/js/auth/authService.js'; // 🔥 프론트엔드 인증 상태 동기화를 위해 임포트
+import { authService } from '/js/system/user/auth-service.js'; // 🔥 프론트엔드 인증 상태 동기화를 위해 임포트
 
 const PASSWORD_CHANGE_TOKEN_KEY = 'passwordChangeToken';
 

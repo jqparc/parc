@@ -14,7 +14,17 @@ export const assetRoutes = {
         js: '/js/asset/setting-stck-item.js',
         auth: true,
     },
+    '/asset/setting/stck-items': {
+        html: '/page/asset/setting-stck-item.html',
+        js: '/js/asset/setting-stck-item.js',
+        auth: true,
+    },
     '/asset/setting/business-type': {
+        html: '/page/asset/setting-business-type.html',
+        js: '/js/asset/setting-business-type.js',
+        auth: true,
+    },
+    '/asset/setting/business-types': {
         html: '/page/asset/setting-business-type.html',
         js: '/js/asset/setting-business-type.js',
         auth: true,

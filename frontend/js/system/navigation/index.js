@@ -1,7 +1,7 @@
 import { navigateTo } from '/js/router.js';
-import { getMenus, getTabs } from '/js/component/navigation/api.js';
-import { clearTabs, renderTabs, renderTopMenus, updateActiveClasses } from '/js/component/navigation/render.js';
-import { findActiveMenuId } from '/js/component/navigation/state.js';
+import { getMenus, getTabs } from '/js/system/navigation/api.js';
+import { clearTabs, renderTabs, renderTopMenus, updateActiveClasses } from '/js/system/navigation/render.js';
+import { findActiveMenuId } from '/js/system/navigation/state.js';
 
 export async function renderNavigation() {
     const currentPath = window.location.pathname;

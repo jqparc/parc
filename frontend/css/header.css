@@ -5,6 +5,9 @@ header {
     align-items: center; /* 세로 기준으로 가운데 정렬합니다 */    
     background-color: rgb(255, 255, 255);
     height: 25px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 .logo-img{

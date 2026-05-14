@@ -1,4 +1,4 @@
-import { createMenuAdminPage } from '/js/auth/menu-admin/page.js';
+import { createMenuAdminPage } from '/js/system/navigation/menu-admin/page.js';
 
 const page = createMenuAdminPage();
 

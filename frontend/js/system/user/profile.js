@@ -1,4 +1,4 @@
-// frontend/js/auth/profile.js
+// frontend/js/system/user/profile.js
 import { navigateTo } from "/js/router.js";
 import { fetchAPI } from '/js/api.js';
 import { CONFIG } from '/js/config.js';

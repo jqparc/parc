@@ -1,4 +1,4 @@
-// frontend/js/auth/guard.js
+// frontend/js/system/user/guard.js
 
 const LOGIN_ALERT_COOLDOWN_MS = 500; // 중복 알림 방지 쿨다운 시간[cite: 6]
 

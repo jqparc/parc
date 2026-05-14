@@ -1,8 +1,8 @@
-import { assetDynamicRoutes, assetRoutes } from '/js/route-config/asset.js';
-import { authRoutes } from '/js/route-config/auth.js';
-import { boardRoutes } from '/js/route-config/board.js';
-import { calendarRoutes } from '/js/route-config/calendar.js';
-import { economyDynamicRoutes, economyRoutes } from '/js/route-config/economy.js';
+import { assetDynamicRoutes, assetRoutes } from '/js/asset/route.js';
+import { authRoutes } from '/js/system/user/route.js';
+import { boardRoutes } from '/js/board/route.js';
+import { calendarRoutes } from '/js/calendar/route.js';
+import { economyDynamicRoutes, economyRoutes } from '/js/economy/route.js';
 
 export const routes = {
     ...calendarRoutes,

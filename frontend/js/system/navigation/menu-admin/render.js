@@ -1,5 +1,5 @@
-import { DOM } from '/js/auth/menu-admin/dom.js';
-import { disabledUnless, escapeHTML, selected } from '/js/auth/menu-admin/format.js';
+import { DOM } from '/js/system/navigation/menu-admin/dom.js';
+import { disabledUnless, escapeHTML, selected } from '/js/system/navigation/menu-admin/format.js';
 
 const useYnSelect = (value, isAdmin) => `
     <select class="admin-control" data-field="use_yn" ${disabledUnless(isAdmin)}>

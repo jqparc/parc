@@ -1,6 +1,6 @@
 // frontend/js/board/post-detail.js
 import { navigateTo } from '/js/router.js';
-import { authService } from '/js/auth/authService.js';
+import { authService } from '/js/system/user/auth-service.js';
 import { deletePost, fetchPost } from '/js/board/post-api.js';
 import { getBoardRouteConfig } from '/js/board/board-registry.js';
 

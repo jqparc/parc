@@ -1,8 +1,8 @@
 // frontend/js/router.js
 import { routes, dynamicRoutes } from '/js/route.js';
-import { renderNavigation } from '/js/component/navigation.js';
-import { checkAuthStatus, updateAuthUI } from '/js/auth/check_auth.js';
-import { authGuard } from '/js/auth/guard.js';
+import { renderNavigation } from '/js/system/navigation/index.js';
+import { checkAuthStatus, updateAuthUI } from '/js/system/user/check-auth.js';
+import { authGuard } from '/js/system/user/guard.js';
 
 let currentModule = null;
 let activeRouteKey = null;

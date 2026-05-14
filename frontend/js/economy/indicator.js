@@ -1,4 +1,4 @@
-import { fetchEconomyHistory, fetchEconomySummaries } from '/js/api/economy.js';
+import { fetchEconomyHistory, fetchEconomySummaries } from '/js/economy/api.js';
 import { createChartPlaceholders, destroyCharts, renderChart, renderChartMessage } from '/js/economy/indicator/chart-renderer.js';
 import { indicatorSymbols } from '/js/economy/indicator/config.js';
 import { indicatorDom } from '/js/economy/indicator/dom.js';

@@ -3,14 +3,14 @@ import { loadComponent } from '/js/util/loader.js';
 export async function loadAppLayout() {
     await loadComponent(
         'header-container',
-        '/component/header.html',
+        '/component/system/header.html',
         null,
-        '/js/auth/check_auth.js',
+        '/js/system/user/check-auth.js',
     );
 
     await loadComponent(
         'nav-container',
-        '/component/navigation.html',
+        '/component/system/navigation.html',
         null,
     );
 }
