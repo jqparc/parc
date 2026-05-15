@@ -1,22 +1,21 @@
-// frontend/js/config.js
 export const CONFIG = {
-    // 백엔드 API 서버의 기본 주소
+    // Backend API base URL.
     BASE_URL: 'http://127.0.0.1:8000/api/v1',
-    
-    // 페이지 이동 경로 (Live Server 기준)
+
+    // Client route paths.
     PAGE_URL: {
         LOGIN: '/login',
         INDEX: '/',
         MYPAGE: '/mypage'
     },
 
-    // 💡 추가된 부분: API 엔드포인트 상수화
+    // API endpoints.
     API_ENDPOINTS: {
         LOGIN: '/user/login',
-        LOGOUT: '/user/logout', // 실제 소스코드 기준
-        USERS_ME: '/user/me',   // 실제 소스코드 기준
+        LOGOUT: '/user/logout',
+        USERS_ME: '/user/me',
         USERS_REFRESH: '/user/refresh',
-        MENUS: '/menu/',        // 실제 소스코드 기준
+        MENUS: '/menu/',
         TABS: '/tab/'
     }
 };
